@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../routes.dart';
 import 'home.dart';
@@ -15,8 +16,38 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
-  
+  bool _isLoading = false;
+
+  Future<void> _loginUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Log in with Firebase Authentication
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      // Navigate to HomePage
+      Navigator.of(context).pushReplacementWithTransition(
+        const HomePage(),
+      );
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Login failed')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 20),
-              
+
               // Logo and subtitle
               Center(
                 child: Column(
@@ -59,9 +90,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 30),
-              
+
               // Login / Register tab
               Row(
                 children: [
@@ -93,9 +124,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // Email field
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,6 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
                   TextField(
+                    controller: _emailController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(4),
@@ -137,9 +169,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // Password field
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,6 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
                   TextField(
+                    controller: _passwordController,
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -181,20 +214,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 8),
-              
-              // Password requirements
-              Text(
-                'Password must be 8-20 letters and contain both letters and numbers. The following symbols can be used: !#\$%()+-./=?@[]^_{|}~',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
-                ),
-              ),
-              
-              const SizedBox(height: 16),
-              
+
               // Show password checkbox
               Row(
                 children: [
@@ -216,16 +238,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Continue button
               ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushReplacementWithTransition(
-                    const HomePage(),
-                  );
-                },
+                onPressed: _isLoading ? null : _loginUser,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
@@ -234,11 +252,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text('CONTINUE'),
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('CONTINUE'),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Forgot password
               Center(
                 child: TextButton(
@@ -253,133 +273,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              
-              const SizedBox(height: 20),
-              
-              // OR divider
-              Row(
-                children: [
-                  const Expanded(child: Divider()),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      'or',
-                      style: TextStyle(color: Colors.grey.shade600),
-                    ),
-                  ),
-                  const Expanded(child: Divider()),
-                ],
-              ),
-              
-              const SizedBox(height: 20),
-              
-              // Google login
-              OutlinedButton.icon(
-                onPressed: () {},
-                icon: Image.asset('assets/images/google.png', height: 18, width: 18, errorBuilder: (context, error, stackTrace) => const Icon(Icons.g_mobiledata, size: 18)),
-                label: const Text(
-                  'Continue with Google',
-                  style: TextStyle(color: Colors.black),
-                ),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  side: BorderSide(color: Colors.grey.shade300),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Facebook login
-              OutlinedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.facebook, color: Colors.blue, size: 18),
-                label: const Text(
-                  'Continue with Facebook',
-                  style: TextStyle(color: Colors.black),
-                ),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  side: BorderSide(color: Colors.grey.shade300),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              ),
-              
-              const SizedBox(height: 20),
-              
-              // Don't have an account
-              Center(
-                child: Text(
-                  'Don\'t have an account?',
-                  style: TextStyle(color: Colors.grey.shade600),
-                ),
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Create account button
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushWithTransition(
-                    const RegisterScreen(),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text('CREATE AN ACCOUNT'),
-              ),
-              
-              const SizedBox(height: 20),
-              
-              // Terms and privacy policy
-              Center(
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  children: [
-                    Text(
-                      'By continuing, you agree to our ',
-                      style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                    ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: const Text(
-                        'Privacy & Cookie Policy',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.blue,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      ' and ',
-                      style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                    ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: const Text(
-                        'Terms & Conditions',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.blue,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              
+
               const SizedBox(height: 20),
             ],
           ),
@@ -391,17 +285,17 @@ class _LoginScreenState extends State<LoginScreen> {
           switch (index) {
             case 0:
               Navigator.of(context).pushReplacementWithTransition(
-                const HomePage()
+                const HomePage(),
               );
               break;
             case 1:
               Navigator.of(context).pushReplacementWithTransition(
-                const AllProductsScreen()
+                const AllProductsScreen(),
               );
               break;
             case 2:
               Navigator.of(context).pushReplacementWithTransition(
-                const WishlistScreen()
+                const WishlistScreen(),
               );
               break;
             case 3:
@@ -412,4 +306,4 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-} 
+}

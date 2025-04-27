@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../routes.dart';
 import 'home.dart';
@@ -15,9 +17,56 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _acceptTerms = false;
-  
+  bool _isLoading = false;
+
+  Future<void> _registerUser() async {
+    if (!_acceptTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You must accept the terms to register.')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Create user with Firebase Authentication
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      // Store user data in Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+        'email': _emailController.text.trim(),
+        'createdAt': DateTime.now(),
+      });
+
+      // Navigate to HomePage
+      Navigator.of(context).pushReplacementWithTransition(
+        const HomePage(),
+      );
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Registration failed')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,8 +78,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 20),
-              
-              // Logo and subtitle
               Center(
                 child: Column(
                   children: [
@@ -60,10 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ],
                 ),
               ),
-              
               const SizedBox(height: 30),
-              
-              // Register page title
               const Center(
                 child: Text(
                   'CREATE AN ACCOUNT',
@@ -73,10 +117,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
-              
               const SizedBox(height: 30),
-              
-              // Email field
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -102,6 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 8),
                   TextField(
+                    controller: _emailController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(4),
@@ -117,10 +159,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ],
               ),
-              
               const SizedBox(height: 20),
-              
-              // Password field
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -146,6 +185,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 8),
                   TextField(
+                    controller: _passwordController,
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -161,10 +201,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ],
               ),
-              
               const SizedBox(height: 8),
-              
-              // Password requirements
               Text(
                 'Password must be 8-20 letters and contain both letters and numbers. The following symbols can be used: !#\$%()+-./=?@[]^_{|}~',
                 style: TextStyle(
@@ -172,10 +209,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   color: Colors.grey.shade600,
                 ),
               ),
-              
               const SizedBox(height: 16),
-              
-              // Show password checkbox
               Row(
                 children: [
                   Checkbox(
@@ -196,15 +230,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ],
               ),
-              
               const SizedBox(height: 20),
-              
-              // Divider
               const Divider(),
-              
               const SizedBox(height: 20),
-              
-              // Membership agreement
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -302,16 +330,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ],
               ),
-              
               const SizedBox(height: 30),
-              
-              // Register button
               ElevatedButton(
-                onPressed: _acceptTerms ? () {
-                  Navigator.of(context).pushReplacementWithTransition(
-                    const HomePage(),
-                  );
-                } : null,
+                onPressed: _isLoading ? null : _registerUser,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
@@ -322,9 +343,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text('REGISTER'),
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('REGISTER'),
               ),
-              
               const SizedBox(height: 20),
             ],
           ),
@@ -336,17 +358,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
           switch (index) {
             case 0:
               Navigator.of(context).pushReplacementWithTransition(
-                const HomePage()
+                const HomePage(),
               );
               break;
             case 1:
               Navigator.of(context).pushReplacementWithTransition(
-                const AllProductsScreen()
+                const AllProductsScreen(),
               );
               break;
             case 2:
               Navigator.of(context).pushReplacementWithTransition(
-                const WishlistScreen()
+                const WishlistScreen(),
               );
               break;
             case 3:
@@ -357,4 +379,4 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
-} 
+}
