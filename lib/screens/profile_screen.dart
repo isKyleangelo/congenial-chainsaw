@@ -4,7 +4,6 @@ import '../widgets/common_drawer.dart';
 import '../routes.dart';
 import 'orders_screen.dart';
 import 'account_details_screen.dart';
-import 'home.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -24,7 +23,7 @@ class ProfileScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 24),
-            
+
             // Profile Name
             const Center(
               child: Text(
@@ -35,9 +34,9 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 40),
-            
+
             // Main menu options
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -47,9 +46,8 @@ class ProfileScreen extends StatelessWidget {
                   icon: Icons.shopping_bag_outlined,
                   label: 'Orders',
                   onTap: () {
-                    Navigator.of(context).pushWithTransition(
-                      const OrdersScreen()
-                    );
+                    Navigator.of(context)
+                        .pushWithTransition(const OrdersScreen());
                   },
                 ),
                 _buildCircleMenuButton(
@@ -57,65 +55,61 @@ class ProfileScreen extends StatelessWidget {
                   icon: Icons.settings_outlined,
                   label: 'Settings',
                   onTap: () {
-                    Navigator.of(context).pushWithTransition(
-                      const AccountDetailsScreen()
-                    );
+                    Navigator.of(context)
+                        .pushWithTransition(const AccountDetailsScreen());
                   },
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 40),
-            
+
             // More menu options
             _buildMenuOption(
               icon: Icons.list_alt_outlined,
               label: 'My orders',
               onTap: () {
-                Navigator.of(context).pushWithTransition(
-                  const OrdersScreen()
-                );
+                Navigator.of(context).pushWithTransition(const OrdersScreen());
               },
             ),
-            
+
             const Divider(height: 1),
-            
+
             _buildMenuOption(
               icon: Icons.person_outline,
               label: 'Account Details',
               onTap: () {
-                Navigator.of(context).pushWithTransition(
-                  const AccountDetailsScreen()
-                );
+                Navigator.of(context)
+                    .pushWithTransition(const AccountDetailsScreen());
               },
             ),
-            
+
             const Divider(height: 1),
-            
+
             _buildMenuOption(
               icon: Icons.support_agent_outlined,
               label: 'Customer Service',
               onTap: () {},
             ),
-            
+
             const Divider(height: 1),
-            
+
             _buildMenuOption(
               icon: Icons.logout_outlined,
               label: 'Sign out',
               onTap: () {},
             ),
-            
+
             const Divider(height: 1),
-            
+
             _buildMenuOption(
               icon: Icons.feedback_outlined,
               label: 'Help us improve the app',
               onTap: () {},
             ),
-            
+
             const Spacer(),
-            
+
             // HLCK logo at bottom
             Center(
               child: Padding(
@@ -146,7 +140,7 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildCircleMenuButton({
     required BuildContext context,
     required IconData icon,
@@ -180,7 +174,7 @@ class ProfileScreen extends StatelessWidget {
       ],
     );
   }
-  
+
   Widget _buildMenuOption({
     required IconData icon,
     required String label,
@@ -199,4 +193,4 @@ class ProfileScreen extends StatelessWidget {
       onTap: onTap,
     );
   }
-} 
+}

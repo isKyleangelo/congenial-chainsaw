@@ -8,7 +8,6 @@ import 'all_products_screen.dart';
 import 'wishlist_screen.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
-import 'profile_screen.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
@@ -39,16 +38,15 @@ class AccountScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 40),
-            
+
             // Login/Create account buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pushWithTransition(
-                      const LoginScreen()
-                    );
+                    Navigator.of(context)
+                        .pushWithTransition(const LoginScreen());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
@@ -56,16 +54,16 @@ class AccountScreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 12),
                   ),
                   child: const Text('LOGIN'),
                 ),
                 const SizedBox(width: 16),
                 OutlinedButton(
                   onPressed: () {
-                    Navigator.of(context).pushWithTransition(
-                      const RegisterScreen()
-                    );
+                    Navigator.of(context)
+                        .pushWithTransition(const RegisterScreen());
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.black,
@@ -73,7 +71,8 @@ class AccountScreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 12),
                   ),
                   child: const Text('SIGN UP'),
                 ),
@@ -87,19 +86,16 @@ class AccountScreen extends StatelessWidget {
         onTap: (index) {
           switch (index) {
             case 0:
-              Navigator.of(context).pushReplacementWithTransition(
-                const HomePage()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const HomePage());
               break;
             case 1:
-              Navigator.of(context).pushReplacementWithTransition(
-                const AllProductsScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const AllProductsScreen());
               break;
             case 2:
-              Navigator.of(context).pushReplacementWithTransition(
-                const WishlistScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const WishlistScreen());
               break;
             case 3:
               // Already in account
@@ -109,4 +105,4 @@ class AccountScreen extends StatelessWidget {
       ),
     );
   }
-} 
+}

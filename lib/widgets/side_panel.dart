@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import '../routes.dart';
-import '../screens/home.dart';
 import '../screens/profile_screen.dart';
 
 class SidePanel extends StatelessWidget {
   final VoidCallback onClose;
-  
+
   const SidePanel({
     super.key,
     required this.onClose,
@@ -33,7 +32,7 @@ class SidePanel extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             // Profile picture and info
             CircleAvatar(
               radius: 40,
@@ -53,7 +52,7 @@ class SidePanel extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // User name and email
             const Text(
               'Hi, Kyle Kuzma!',
@@ -71,18 +70,16 @@ class SidePanel extends StatelessWidget {
                 fontSize: 14,
               ),
             ),
-            
+
             const SizedBox(height: 40),
-            
+
             // Navigation links
             _buildNavigationItem(
               icon: Icons.shopping_bag_outlined,
               label: 'My Order',
               onTap: () {
                 onClose();
-                Navigator.of(context).pushWithTransition(
-                  const ProfileScreen()
-                );
+                Navigator.of(context).pushWithTransition(const ProfileScreen());
               },
             ),
             _buildNavigationItem(
@@ -117,9 +114,9 @@ class SidePanel extends StatelessWidget {
                 // Navigate to help screen
               },
             ),
-            
+
             const Spacer(),
-            
+
             // Logout button
             Padding(
               padding: const EdgeInsets.all(20),
@@ -149,7 +146,7 @@ class SidePanel extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildNavigationItem({
     required IconData icon,
     required String label,
@@ -173,4 +170,4 @@ class SidePanel extends StatelessWidget {
       minLeadingWidth: 20,
     );
   }
-} 
+}

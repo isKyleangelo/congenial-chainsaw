@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'home.dart';
+import 'home_widget.dart';
 import 'screens/cart_screen.dart';
 import 'screens/checkout_screen.dart';
 import 'screens/confirm_checkout_screen.dart';
@@ -12,15 +12,13 @@ import 'screens/account_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'navigation.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-);
+  );
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
@@ -92,7 +90,7 @@ class MyApp extends StatelessWidget {
                   'isSale': false,
                 },
               ];
-              
+
               return CategoryScreen(
                 title: categoryName,
                 products: sampleProducts,

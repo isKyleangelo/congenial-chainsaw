@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../routes.dart';
 import '../screens/cart_screen.dart';
-import 'side_panel.dart';
 
 class HLCKAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -18,36 +17,49 @@ class HLCKAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.white,
-      elevation: 0,
-      title: Text(
-        title,
-        style: const TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-        ),
+      backgroundColor: Colors.black,
+      elevation: 9,
+      title: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/4leafclover.png',
+            height: 40,
+            width: 45,
+          ),
+          const SizedBox(width: 0),
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 26,
+                fontFamily: 'Saking',
+              ),
+            ),
+          ),
+        ],
       ),
       centerTitle: true,
       leading: showBackButton
           ? IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () => Navigator.of(context).pop(),
             )
           : Builder(
               builder: (context) => IconButton(
-                icon: const Icon(Icons.menu, color: Colors.black),
+                icon: const Icon(Icons.menu, color: Colors.white),
                 onPressed: () => Scaffold.of(context).openDrawer(),
               ),
             ),
       actions: [
         if (showCartIcon)
           IconButton(
-            icon: const Icon(Icons.shopping_bag_outlined, color: Colors.black),
+            icon: const Icon(Icons.shopping_bag_outlined, color: Colors.white),
             onPressed: () {
-              Navigator.of(context).pushWithTransition(
-                const CartScreen()
-              );
+              Navigator.of(context).pushWithTransition(const CartScreen());
             },
           ),
       ],
@@ -56,4 +68,4 @@ class HLCKAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-} 
+}

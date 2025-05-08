@@ -6,8 +6,6 @@ import '../routes.dart';
 import 'home.dart';
 import 'all_products_screen.dart';
 import 'wishlist_screen.dart';
-import 'account_screen.dart';
-import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -37,8 +35,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       // Create user with Firebase Authentication
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
@@ -93,7 +91,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.check_circle, size: 14, color: Colors.green.shade400),
+                        Icon(Icons.check_circle,
+                            size: 14, color: Colors.green.shade400),
                         const SizedBox(width: 4),
                         Text(
                           'Your Data is Protected',
@@ -153,7 +152,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.circular(4),
                         borderSide: BorderSide(color: Colors.grey.shade300),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 14),
                     ),
                     keyboardType: TextInputType.emailAddress,
                   ),
@@ -196,7 +196,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.circular(4),
                         borderSide: BorderSide(color: Colors.grey.shade300),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 14),
                     ),
                   ),
                 ],
@@ -263,7 +264,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     children: [
                       Text(
                         'By creating an account, you agree to HLCK\'s ',
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        style: TextStyle(
+                            fontSize: 12, color: Colors.grey.shade600),
                       ),
                       GestureDetector(
                         onTap: () {},
@@ -278,7 +280,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       Text(
                         ' and ',
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        style: TextStyle(
+                            fontSize: 12, color: Colors.grey.shade600),
                       ),
                       GestureDetector(
                         onTap: () {},
@@ -311,7 +314,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Flexible(
                         child: Text(
                           'I agree HLCK process my personal data in order to manage my personal account, in accordance with HLCK\'s ',
-                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                          style: TextStyle(
+                              fontSize: 12, color: Colors.grey.shade600),
                         ),
                       ),
                       GestureDetector(

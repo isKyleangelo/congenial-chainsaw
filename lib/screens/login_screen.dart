@@ -5,7 +5,6 @@ import '../routes.dart';
 import 'home.dart';
 import 'all_products_screen.dart';
 import 'wishlist_screen.dart';
-import 'account_screen.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -76,7 +75,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.check_circle, size: 14, color: Colors.green.shade400),
+                        Icon(Icons.check_circle,
+                            size: 14, color: Colors.green.shade400),
                         const SizedBox(width: 4),
                         Text(
                           'Your Data is Protected',
@@ -163,7 +163,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(4),
                         borderSide: BorderSide(color: Colors.grey.shade300),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 14),
                     ),
                     keyboardType: TextInputType.emailAddress,
                   ),
@@ -209,7 +210,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(4),
                         borderSide: BorderSide(color: Colors.grey.shade300),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 14),
                     ),
                   ),
                 ],

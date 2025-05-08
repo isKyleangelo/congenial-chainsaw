@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import '../routes.dart';
-import '../screens/home.dart';
-import '../screens/all_products_screen.dart';
-import '../screens/wishlist_screen.dart';
-import '../screens/account_screen.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
 
   const BottomNavBar({
-    super.key, 
+    super.key,
     required this.currentIndex,
     required this.onTap,
   });
@@ -19,9 +14,9 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      selectedItemColor: Colors.black,
-      unselectedItemColor: Colors.grey,
-      backgroundColor: Colors.white,
+      selectedItemColor: const Color(0xFF1F502A),
+      unselectedItemColor: Colors.white,
+      backgroundColor: const Color(0xFF121212),
       currentIndex: currentIndex,
       onTap: onTap,
       items: const [
@@ -48,4 +43,4 @@ class BottomNavBar extends StatelessWidget {
       ],
     );
   }
-} 
+}

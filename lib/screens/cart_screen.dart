@@ -6,7 +6,6 @@ import 'confirm_checkout_screen.dart';
 import 'home.dart';
 import 'wishlist_screen.dart';
 import 'account_screen.dart';
-import 'all_products_screen.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -80,9 +79,9 @@ class CartScreen extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Promo code
             Row(
               children: [
@@ -95,7 +94,8 @@ class CartScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                         borderSide: BorderSide(color: Colors.grey.shade300),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                     ),
                   ),
                 ),
@@ -113,9 +113,9 @@ class CartScreen extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Order summary
             const Text(
               'Basket Total',
@@ -173,15 +173,14 @@ class CartScreen extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const Spacer(),
-            
+
             // Checkout button
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pushWithTransition(
-                  const ConfirmCheckoutScreen()
-                );
+                Navigator.of(context)
+                    .pushWithTransition(const ConfirmCheckoutScreen());
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
@@ -201,26 +200,23 @@ class CartScreen extends StatelessWidget {
         onTap: (index) {
           switch (index) {
             case 0:
-              Navigator.of(context).pushReplacementWithTransition(
-                const HomePage()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const HomePage());
               break;
             case 1:
               // Already in shop
               break;
             case 2:
-              Navigator.of(context).pushReplacementWithTransition(
-                const WishlistScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const WishlistScreen());
               break;
             case 3:
-              Navigator.of(context).pushReplacementWithTransition(
-                const AccountScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const AccountScreen());
               break;
           }
         },
       ),
     );
   }
-} 
+}
