@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/hlck_app_bar.dart';
 import '../widgets/common_drawer.dart';
 import '../routes.dart';
-import 'orders_screen.dart';
+import 'orders/orders_screen.dart';
 import 'account_details_screen.dart';
 
 class ProfileScreen extends StatelessWidget {

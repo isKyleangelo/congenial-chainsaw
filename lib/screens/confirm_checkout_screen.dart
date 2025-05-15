@@ -3,10 +3,10 @@ import '../widgets/bottom_nav_bar.dart';
 import '../widgets/hlck_app_bar.dart';
 import '../routes.dart';
 import 'checkout_screen.dart';
-import 'home.dart';
-import 'wishlist_screen.dart';
-import 'account_screen.dart';
-import 'all_products_screen.dart';
+import 'home/home.dart';
+import 'wishlist/wishlist_screen.dart';
+import 'profile/account_screen.dart';
+import 'products/all_products_screen.dart';
 
 class ConfirmCheckoutScreen extends StatelessWidget {
   const ConfirmCheckoutScreen({super.key});
@@ -38,7 +38,7 @@ class ConfirmCheckoutScreen extends StatelessWidget {
             right: 20,
             child: Icon(Icons.eco, size: 40, color: Colors.green.shade300),
           ),
-          
+
           // Main content
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -46,7 +46,7 @@ class ConfirmCheckoutScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 100), // Space for shamrocks
-                
+
                 // Order summary card
                 Card(
                   elevation: 4,
@@ -75,7 +75,7 @@ class ConfirmCheckoutScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 16),
-                            
+
                             // Item details
                             Expanded(
                               child: Column(
@@ -100,10 +100,10 @@ class ConfirmCheckoutScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        
+
                         const SizedBox(height: 20),
                         const Divider(),
-                        
+
                         // Shipping information
                         const Text(
                           'Shipping Address',
@@ -123,9 +123,9 @@ class ConfirmCheckoutScreen extends StatelessWidget {
                             const Text('John Doe'),
                           ],
                         ),
-                        
+
                         const SizedBox(height: 12),
-                        
+
                         // Contact information
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -137,10 +137,10 @@ class ConfirmCheckoutScreen extends StatelessWidget {
                             const Text('09123456789'),
                           ],
                         ),
-                        
+
                         const SizedBox(height: 20),
                         const Divider(),
-                        
+
                         // Payment method
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -152,10 +152,10 @@ class ConfirmCheckoutScreen extends StatelessWidget {
                             const Text('Cash'),
                           ],
                         ),
-                        
+
                         const SizedBox(height: 20),
                         const Divider(),
-                        
+
                         // Total
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -181,15 +181,14 @@ class ConfirmCheckoutScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Confirm checkout button
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pushWithTransition(
-                      const CheckoutScreen()
-                    );
+                    Navigator.of(context)
+                        .pushWithTransition(const CheckoutScreen());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
@@ -216,28 +215,24 @@ class ConfirmCheckoutScreen extends StatelessWidget {
         onTap: (index) {
           switch (index) {
             case 0:
-              Navigator.of(context).pushReplacementWithTransition(
-                const HomePage()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const HomePage());
               break;
             case 1:
-              Navigator.of(context).pushReplacementWithTransition(
-                const AllProductsScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const AllProductsScreen());
               break;
             case 2:
-              Navigator.of(context).pushReplacementWithTransition(
-                const WishlistScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const WishlistScreen());
               break;
             case 3:
-              Navigator.of(context).pushReplacementWithTransition(
-                const AccountScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const AccountScreen());
               break;
           }
         },
       ),
     );
   }
-} 
+}

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../widgets/bottom_nav_bar.dart';
-import '../routes.dart';
-import 'home.dart';
-import 'all_products_screen.dart';
-import 'wishlist_screen.dart';
+import '../../widgets/bottom_nav_bar.dart';
+import '../../routes.dart';
+import '../home/home.dart';
+import '../products/all_products_screen.dart';
+import '../wishlist/wishlist_screen.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {

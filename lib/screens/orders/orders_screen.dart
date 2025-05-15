@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../widgets/hlck_app_bar.dart';
-import '../widgets/common_drawer.dart';
-import '../widgets/bottom_nav_bar.dart';
-import '../routes.dart';
-import 'home.dart';
-import 'all_products_screen.dart';
-import 'wishlist_screen.dart';
-import 'account_screen.dart';
+import '../../widgets/hlck_app_bar.dart';
+import '../../widgets/common_drawer.dart';
+import '../../widgets/bottom_nav_bar.dart';
+import '../../routes.dart';
+import '../home/home.dart';
+import '../products/all_products_screen.dart';
+import '../wishlist/wishlist_screen.dart';
+import '../profile/account_screen.dart';
 
 class OrdersScreen extends StatelessWidget {
   const OrdersScreen({super.key});
@@ -27,7 +27,7 @@ class OrdersScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 40),
-              
+
               // No purchases message
               const Text(
                 'No purchases to show right now',
@@ -37,7 +37,7 @@ class OrdersScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               Text(
                 'Once you have completed a purchase, you will find it here.',
                 style: TextStyle(
@@ -46,18 +46,16 @@ class OrdersScreen extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // Shop button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pushNamedAndRemoveUntilWithTransition(
-                      const HomePage(),
-                      (route) => false
-                    );
+                        const HomePage(), (route) => false);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
@@ -79,28 +77,24 @@ class OrdersScreen extends StatelessWidget {
         onTap: (index) {
           switch (index) {
             case 0:
-              Navigator.of(context).pushReplacementWithTransition(
-                const HomePage()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const HomePage());
               break;
             case 1:
-              Navigator.of(context).pushReplacementWithTransition(
-                const AllProductsScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const AllProductsScreen());
               break;
             case 2:
-              Navigator.of(context).pushReplacementWithTransition(
-                const WishlistScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const WishlistScreen());
               break;
             case 3:
-              Navigator.of(context).pushReplacementWithTransition(
-                const AccountScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const AccountScreen());
               break;
           }
         },
       ),
     );
   }
-} 
+}

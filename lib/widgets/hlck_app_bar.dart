@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../routes.dart';
-import '../screens/cart_screen.dart';
+import '../screens/cart/cart_screen.dart';
 
 class HLCKAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;

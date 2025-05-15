@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/hlck_app_bar.dart';
 import '../routes.dart';
-import 'home.dart';
-import 'wishlist_screen.dart';
-import 'account_screen.dart';
-import 'all_products_screen.dart';
+import 'home/home.dart';
+import 'wishlist/wishlist_screen.dart';
+import 'profile/account_screen.dart';
+import 'products/all_products_screen.dart';
 
 class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});
@@ -46,9 +46,7 @@ class CheckoutScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pushNamedAndRemoveUntilWithTransition(
-                  const HomePage(),
-                  (route) => false
-                );
+                    const HomePage(), (route) => false);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
@@ -68,28 +66,24 @@ class CheckoutScreen extends StatelessWidget {
         onTap: (index) {
           switch (index) {
             case 0:
-              Navigator.of(context).pushReplacementWithTransition(
-                const HomePage()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const HomePage());
               break;
             case 1:
-              Navigator.of(context).pushReplacementWithTransition(
-                const AllProductsScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const AllProductsScreen());
               break;
             case 2:
-              Navigator.of(context).pushReplacementWithTransition(
-                const WishlistScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const WishlistScreen());
               break;
             case 3:
-              Navigator.of(context).pushReplacementWithTransition(
-                const AccountScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const AccountScreen());
               break;
           }
         },
       ),
     );
   }
-} 
+}

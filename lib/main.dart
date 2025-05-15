@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'home_widget.dart';
-import 'screens/cart_screen.dart';
+import 'widgets/home_widget.dart';
+import 'screens/cart/cart_screen.dart';
 import 'screens/checkout_screen.dart';
 import 'screens/confirm_checkout_screen.dart';
-import 'screens/wishlist_screen.dart';
+import 'screens/wishlist/wishlist_screen.dart';
 import 'screens/oops_screen.dart';
-import 'screens/all_products_screen.dart';
-import 'screens/category_screen.dart';
-import 'screens/account_screen.dart';
-import 'screens/login_screen.dart';
-import 'screens/register_screen.dart';
+import 'screens/products/all_products_screen.dart';
+import 'screens/products/category_screen.dart';
+import 'screens/profile/account_screen.dart';
+import 'screens/auth/login_screen.dart';
+import 'screens/auth/register_screen.dart';
 import 'navigation.dart';
-import 'firebase_options.dart';
+import 'config/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

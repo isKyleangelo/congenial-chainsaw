@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../widgets/bottom_nav_bar.dart';
-import '../widgets/hlck_app_bar.dart';
-import '../routes.dart';
-import 'home.dart';
+import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/hlck_app_bar.dart';
+import '../../routes.dart';
+import '../home/home.dart';
 import 'all_products_screen.dart';
-import 'wishlist_screen.dart';
-import 'account_screen.dart';
+import '../wishlist/wishlist_screen.dart';
+import '../profile/account_screen.dart';
 
 class CategoryScreen extends StatelessWidget {
   final String title;
@@ -49,24 +49,20 @@ class CategoryScreen extends StatelessWidget {
         onTap: (index) {
           switch (index) {
             case 0:
-              Navigator.of(context).pushReplacementWithTransition(
-                const HomePage()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const HomePage());
               break;
             case 1:
-              Navigator.of(context).pushReplacementWithTransition(
-                const AllProductsScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const AllProductsScreen());
               break;
             case 2:
-              Navigator.of(context).pushReplacementWithTransition(
-                const WishlistScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const WishlistScreen());
               break;
             case 3:
-              Navigator.of(context).pushReplacementWithTransition(
-                const AccountScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const AccountScreen());
               break;
           }
         },
@@ -121,7 +117,8 @@ class ProductCard extends StatelessWidget {
                   top: 8,
                   right: 8,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: !isStock ? Colors.red : Colors.green,
                       borderRadius: BorderRadius.circular(4),
@@ -138,7 +135,7 @@ class ProductCard extends StatelessWidget {
                 ),
             ],
           ),
-          
+
           // Product details
           Expanded(
             child: Padding(
@@ -165,7 +162,7 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                   const Spacer(flex: 1),
-                  
+
                   // Add to cart button
                   SizedBox(
                     width: double.infinity,
@@ -181,7 +178,7 @@ class ProductCard extends StatelessWidget {
                       child: const Text('ADD TO CART'),
                     ),
                   ),
-                  
+
                   // Wishlist button with heart icon
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -203,4 +200,4 @@ class ProductCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../widgets/bottom_nav_bar.dart';
-import '../widgets/hlck_app_bar.dart';
-import '../routes.dart';
-import 'home.dart';
-import 'wishlist_screen.dart';
-import 'account_screen.dart';
+import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/hlck_app_bar.dart';
+import '../../routes.dart';
+import '../home/home.dart';
+import '../wishlist/wishlist_screen.dart';
+import '../profile/account_screen.dart';
 
 class AllProductsScreen extends StatelessWidget {
   const AllProductsScreen({super.key});
@@ -43,7 +43,7 @@ class AllProductsScreen extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Shamrock logo
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -68,7 +68,7 @@ class AllProductsScreen extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Filter and product count
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -76,7 +76,8 @@ class AllProductsScreen extends StatelessWidget {
               children: [
                 // Filter button
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade300),
                     borderRadius: BorderRadius.circular(4),
@@ -101,9 +102,9 @@ class AllProductsScreen extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Product grid
           Expanded(
             child: GridView.count(
@@ -124,29 +125,26 @@ class AllProductsScreen extends StatelessWidget {
         onTap: (index) {
           switch (index) {
             case 0:
-              Navigator.of(context).pushReplacementWithTransition(
-                const HomePage()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const HomePage());
               break;
             case 1:
               // Already in shop tab
               break;
             case 2:
-              Navigator.of(context).pushReplacementWithTransition(
-                const WishlistScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const WishlistScreen());
               break;
             case 3:
-              Navigator.of(context).pushReplacementWithTransition(
-                const AccountScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const AccountScreen());
               break;
           }
         },
       ),
     );
   }
-  
+
   Widget _buildProductCard(String title) {
     return Container(
       decoration: BoxDecoration(
@@ -180,4 +178,4 @@ class AllProductsScreen extends StatelessWidget {
       ),
     );
   }
-} 
+}

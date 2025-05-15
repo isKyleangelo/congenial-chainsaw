@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'widgets/bottom_nav_bar.dart';
-import 'widgets/hlck_app_bar.dart';
-import 'widgets/common_drawer.dart';
-import 'screens/category_screen.dart';
-import 'screens/all_products_screen.dart';
-import 'screens/wishlist_screen.dart';
-import 'screens/account_screen.dart';
-import 'routes.dart';
+import 'bottom_nav_bar.dart';
+import 'hlck_app_bar.dart';
+import 'common_drawer.dart';
+import '../screens/products/category_screen.dart';
+import '../screens/products/all_products_screen.dart';
+import '../screens/wishlist/wishlist_screen.dart';
+import '../screens/profile/account_screen.dart';
+import '../routes.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -218,6 +218,28 @@ class HomePage extends StatelessWidget {
   }
 
   void _navigateToCategory(BuildContext context, String categoryName) {
+    // Custom products for 'Only in HLCK'
+    if (categoryName == 'Only in HLCK' || categoryName == 'Only in\nHLCK') {
+      final List<Map<String, dynamic>> onlyInHlckProducts = [
+        {
+          'name': 'White Logo Shirt',
+          'price': '₱1,299',
+          'isStock': true,
+          'isSale': false,
+          'imageUrl': 'assets/images/onlyin_hlck/white_logo1.png',
+          'description':
+              'Exclusive HLCK white logo shirt. Only available here!',
+        },
+        // Add more exclusive products here if needed
+      ];
+      Navigator.of(context).pushWithTransition(
+        CategoryScreen(
+          title: categoryName,
+          products: onlyInHlckProducts,
+        ),
+      );
+      return;
+    }
     // Sample products for demonstration
     final List<Map<String, dynamic>> sampleProducts = [
       {

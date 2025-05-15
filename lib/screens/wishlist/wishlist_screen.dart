@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../widgets/bottom_nav_bar.dart';
-import '../widgets/hlck_app_bar.dart';
-import '../routes.dart';
-import 'home.dart';
-import 'all_products_screen.dart';
-import 'account_screen.dart';
-import 'oops_screen.dart';
+import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/hlck_app_bar.dart';
+import '../../routes.dart';
+import '../home/home.dart';
+import '../products/all_products_screen.dart';
+import '../profile/account_screen.dart';
+import '../oops_screen.dart';
 
 class WishlistScreen extends StatelessWidget {
   const WishlistScreen({super.key});
@@ -48,7 +48,7 @@ class WishlistScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    
+
                     // Product details in column
                     Expanded(
                       child: Column(
@@ -80,13 +80,12 @@ class WishlistScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    
+
                     // Add to cart button on the right
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).pushWithTransition(
-                          const OopsScreen()
-                        );
+                        Navigator.of(context)
+                            .pushWithTransition(const OopsScreen());
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
@@ -96,7 +95,8 @@ class WishlistScreen extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                       ),
                       child: const Text(
                         'Add to cart',
@@ -115,26 +115,23 @@ class WishlistScreen extends StatelessWidget {
         onTap: (index) {
           switch (index) {
             case 0:
-              Navigator.of(context).pushReplacementWithTransition(
-                const HomePage()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const HomePage());
               break;
             case 1:
-              Navigator.of(context).pushReplacementWithTransition(
-                const AllProductsScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const AllProductsScreen());
               break;
             case 2:
               // Already in wishlist
               break;
             case 3:
-              Navigator.of(context).pushReplacementWithTransition(
-                const AccountScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const AccountScreen());
               break;
           }
         },
       ),
     );
   }
-} 
+}

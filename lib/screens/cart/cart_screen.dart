@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../widgets/bottom_nav_bar.dart';
-import '../widgets/hlck_app_bar.dart';
-import '../routes.dart';
-import 'confirm_checkout_screen.dart';
-import 'home.dart';
-import 'wishlist_screen.dart';
-import 'account_screen.dart';
+import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/hlck_app_bar.dart';
+import '../../routes.dart';
+import '../confirm_checkout_screen.dart';
+import '../home/home.dart';
+import '../wishlist/wishlist_screen.dart';
+import '../profile/account_screen.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});

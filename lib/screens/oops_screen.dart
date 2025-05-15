@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/hlck_app_bar.dart';
 import '../routes.dart';
-import 'home.dart';
-import 'all_products_screen.dart';
-import 'wishlist_screen.dart';
-import 'login_screen.dart';
+import 'home/home.dart';
+import 'products/all_products_screen.dart';
+import 'wishlist/wishlist_screen.dart';
+import 'auth/login_screen.dart';
 
 class OopsScreen extends StatelessWidget {
   const OopsScreen({super.key});
@@ -44,7 +44,7 @@ class OopsScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 40),
-              
+
               // Error message
               Text(
                 'Oops! It seems you don\'t have an account.',
@@ -64,15 +64,14 @@ class OopsScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
-              
+
               // CREATE button
               SizedBox(
                 width: 150,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pushWithTransition(
-                      const LoginScreen()
-                    );
+                    Navigator.of(context)
+                        .pushWithTransition(const LoginScreen());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
@@ -89,15 +88,14 @@ class OopsScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // HOME button
               SizedBox(
                 width: 150,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pushReplacementWithTransition(
-                      const HomePage()
-                    );
+                    Navigator.of(context)
+                        .pushReplacementWithTransition(const HomePage());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green.shade200,
@@ -122,19 +120,16 @@ class OopsScreen extends StatelessWidget {
         onTap: (index) {
           switch (index) {
             case 0:
-              Navigator.of(context).pushReplacementWithTransition(
-                const HomePage()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const HomePage());
               break;
             case 1:
-              Navigator.of(context).pushReplacementWithTransition(
-                const AllProductsScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const AllProductsScreen());
               break;
             case 2:
-              Navigator.of(context).pushReplacementWithTransition(
-                const WishlistScreen()
-              );
+              Navigator.of(context)
+                  .pushReplacementWithTransition(const WishlistScreen());
               break;
             case 3:
               // Already in account section
@@ -144,4 +139,4 @@ class OopsScreen extends StatelessWidget {
       ),
     );
   }
-} 
+}

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../widgets/bottom_nav_bar.dart';
-import '../routes.dart';
-import 'home.dart';
-import 'all_products_screen.dart';
-import 'wishlist_screen.dart';
+import '../../widgets/bottom_nav_bar.dart';
+import '../../routes.dart';
+import '../home/home.dart';
+import '../products/all_products_screen.dart';
+import '../wishlist/wishlist_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

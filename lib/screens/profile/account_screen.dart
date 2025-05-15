@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import '../widgets/bottom_nav_bar.dart';
-import '../widgets/hlck_app_bar.dart';
-import '../widgets/common_drawer.dart';
-import '../routes.dart';
-import 'home.dart';
-import 'all_products_screen.dart';
-import 'wishlist_screen.dart';
-import 'login_screen.dart';
-import 'register_screen.dart';
+import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/hlck_app_bar.dart';
+import '../../widgets/common_drawer.dart';
+import '../../routes.dart';
+import '../home/home.dart';
+import '../products/all_products_screen.dart';
+import '../wishlist/wishlist_screen.dart';
+import '../auth/login_screen.dart';
+import '../auth/register_screen.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
