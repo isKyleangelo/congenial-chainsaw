@@ -4,12 +4,19 @@ import '../widgets/common_drawer.dart';
 import '../routes.dart';
 import 'orders/orders_screen.dart';
 import 'account_details_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'auth/login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Add MediaQuery to get screen size
+    final Size screenSize = MediaQuery.of(context).size;
+    final double screenWidth = screenSize.width;
+    final double screenHeight = screenSize.height;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const HLCKAppBar(
@@ -18,24 +25,24 @@ class ProfileScreen extends StatelessWidget {
       ),
       drawer: const CommonDrawer(),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(screenWidth * 0.04), // Responsive padding
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 24),
+            SizedBox(height: screenHeight * 0.03),
 
             // Profile Name
-            const Center(
+            Center(
               child: Text(
-                'KYLE KUZMA',
-                style: TextStyle(
+                FirebaseAuth.instance.currentUser?.email ?? 'No Email',
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
 
-            const SizedBox(height: 40),
+            SizedBox(height: screenHeight * 0.05),
 
             // Main menu options
             Row(
@@ -62,7 +69,7 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 40),
+            SizedBox(height: screenHeight * 0.05),
 
             // More menu options
             _buildMenuOption(
@@ -97,7 +104,15 @@ class ProfileScreen extends StatelessWidget {
             _buildMenuOption(
               icon: Icons.logout_outlined,
               label: 'Sign out',
-              onTap: () {},
+              onTap: () async {
+                await FirebaseAuth.instance.signOut();
+                if (context.mounted) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    (route) => false,
+                  );
+                }
+              },
             ),
 
             const Divider(height: 1),
@@ -113,7 +128,7 @@ class ProfileScreen extends StatelessWidget {
             // HLCK logo at bottom
             Center(
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 20),
+                padding: EdgeInsets.only(bottom: screenHeight * 0.025),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -147,20 +162,21 @@ class ProfileScreen extends StatelessWidget {
     required String label,
     required VoidCallback onTap,
   }) {
+    final double buttonSize = MediaQuery.of(context).size.width * 0.15;
     return Column(
       children: [
         InkWell(
           onTap: onTap,
           child: Container(
-            width: 60,
-            height: 60,
+            width: buttonSize,
+            height: buttonSize,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(color: Colors.black, width: 1),
             ),
             child: Icon(
               icon,
-              size: 28,
+              size: buttonSize * 0.47,
             ),
           ),
         ),

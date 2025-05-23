@@ -46,8 +46,8 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       // Navigate to HomePage
-      Navigator.of(context).pushReplacementWithTransition(
-        const HomePage(),
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const HomePage()),
       );
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -299,22 +299,24 @@ class _LoginScreenState extends State<LoginScreen> {
         onTap: (index) {
           switch (index) {
             case 0:
-              Navigator.of(context).pushReplacementWithTransition(
-                const HomePage(),
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const HomePage()),
               );
               break;
             case 1:
-              Navigator.of(context).pushReplacementWithTransition(
-                const AllProductsScreen(),
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const AllProductsScreen()),
               );
               break;
             case 2:
-              Navigator.of(context).pushReplacementWithTransition(
-                const WishlistScreen(),
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const WishlistScreen()),
               );
               break;
             case 3:
-              // Already on account page
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const RegisterScreen()),
+              );
               break;
           }
         },

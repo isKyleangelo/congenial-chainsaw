@@ -46,18 +46,21 @@ class HomePage extends StatelessWidget {
               ),
 
               // Category Grid
-              GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16.0,
-                mainAxisSpacing: 16.0,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: const [
-                  CategoryItem(title: 'Plain Tee'),
-                  CategoryItem(title: 'Hoodies'),
-                  CategoryItem(title: 'Graphic Tee'),
-                  CategoryItem(title: 'Only in\nHLCK'),
-                ],
+              SizedBox(
+                height: 250, // Adjust as needed
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16.0,
+                  mainAxisSpacing: 16.0,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: const [
+                    CategoryItem(title: 'Plain Tee'),
+                    CategoryItem(title: 'Hoodies'),
+                    CategoryItem(title: 'Graphic Tee'),
+                    CategoryItem(title: 'Only in\nHLCK'),
+                  ],
+                ),
               ),
 
               // Latest Drops Heading
@@ -75,8 +78,9 @@ class HomePage extends StatelessWidget {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context)
-                            .pushWithTransition(const AllProductsScreen());
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const AllProductsScreen()),
+                        );
                       },
                       child: const Text(
                         'Shop All',
@@ -88,16 +92,19 @@ class HomePage extends StatelessWidget {
               ),
 
               // Latest Drops Items
-              GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16.0,
-                mainAxisSpacing: 16.0,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: const [
-                  LatestDropItem(),
-                  LatestDropItem(),
-                ],
+              SizedBox(
+                height: 180, // Adjust as needed
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16.0,
+                  mainAxisSpacing: 16.0,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: const [
+                    LatestDropItem(),
+                    LatestDropItem(),
+                  ],
+                ),
               ),
 
               // Fanny Pack Banner
@@ -108,37 +115,31 @@ class HomePage extends StatelessWidget {
                   color: Colors.pink[100],
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Fanny Packs?',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 24.0,
-                              ),
-                            ),
-                            const Spacer(),
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.black,
-                                minimumSize: const Size(100, 36),
-                              ),
-                              child: const Text('SHOP NOW'),
-                            ),
-                          ],
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Fanny Packs?',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24.0,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 24), // <-- Replace Spacer with SizedBox
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          minimumSize: const Size(100, 36),
+                        ),
+                        child: const Text('SHOP NOW'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -152,16 +153,19 @@ class HomePage extends StatelessWidget {
             case 0:
               break;
             case 1:
-              Navigator.of(context)
-                  .pushReplacementWithTransition(const AllProductsScreen());
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const AllProductsScreen()),
+              );
               break;
             case 2:
-              Navigator.of(context)
-                  .pushReplacementWithTransition(const WishlistScreen());
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const WishlistScreen()),
+              );
               break;
             case 3:
-              Navigator.of(context)
-                  .pushReplacementWithTransition(const AccountScreen());
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const AccountScreen()),
+              );
               break;
           }
         },
@@ -287,8 +291,34 @@ class CategoryItem extends StatelessWidget {
 }
 
 void _navigateToCategory(BuildContext context, String categoryName) {
+  if (categoryName == 'Only in HLCK' || categoryName == 'Only in\nHLCK') {
+    final onlyInHlckProducts = [
+      {
+        'name': 'White Logo Shirt',
+        'price': '₱1,299',
+        'isStock': true,
+        'isSale': false,
+        'imageUrl': 'assets/images/onlyin_hlck/white_logo1.png',
+        'description': 'Exclusive HLCK white logo shirt. Only available here!',
+      },
+    ];
+    Navigator.of(context).pushWithTransition(
+      CategoryScreen(title: categoryName, products: onlyInHlckProducts),
+    );
+    return;
+  }
+
+  final sampleProducts = List.generate(4, (index) {
+    return {
+      'name': '${categoryName.split(' ')[0]} ${index + 1}',
+      'price': '₱${999 + (index * 100)}',
+      'isStock': index % 3 != 2,
+      'isSale': index % 2 == 0,
+    };
+  });
+
   Navigator.of(context).pushWithTransition(
-    CategoryScreen(title: categoryName),
+    CategoryScreen(title: categoryName, products: sampleProducts),
   );
 }
 
@@ -301,7 +331,9 @@ class LatestDropItem extends StatelessWidget {
       tag: 'latest-drop',
       child: InkWell(
         onTap: () {
-          Navigator.of(context).pushWithTransition(const AllProductsScreen());
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const AllProductsScreen()),
+          );
         },
         borderRadius: BorderRadius.circular(8.0),
         child: Container(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'widgets/home_widget.dart';
 import 'screens/cart/cart_screen.dart';
 import 'screens/checkout_screen.dart';
@@ -15,8 +16,6 @@ import 'screens/auth/register_screen.dart';
 import 'navigation.dart';
 import 'config/firebase_options.dart';
 import 'providers/product_provider.dart';
-
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,7 +54,19 @@ class MyApp extends StatelessWidget {
         ),
       ),
       navigatorKey: NavigationService().navigatorKey,
-      initialRoute: '/home',
+      // REMOVE initialRoute and use home with StreamBuilder
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasData) {
+            return const HomePage();
+          }
+          return const LoginScreen();
+        },
+      ),
       routes: {
         '/home': (context) => const HomePage(),
         '/cart': (context) => const CartScreen(),
@@ -69,14 +80,42 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
       },
-      // For category pages, we'll use onGenerateRoute since they need parameters
       onGenerateRoute: (settings) {
         if (settings.name!.startsWith('/category/')) {
           final categoryName = settings.name!.split('/category/')[1];
           return MaterialPageRoute(
             builder: (context) {
+              // Sample products for the category
+              final List<Map<String, dynamic>> sampleProducts = [
+                {
+                  'name': '${categoryName.split(' ')[0]} 1',
+                  'price': '₱999',
+                  'isStock': true,
+                  'isSale': false,
+                },
+                {
+                  'name': '${categoryName.split(' ')[0]} 2',
+                  'price': '₱1,299',
+                  'isStock': true,
+                  'isSale': true,
+                },
+                {
+                  'name': '${categoryName.split(' ')[0]} 3',
+                  'price': '₱899',
+                  'isStock': false,
+                  'isSale': false,
+                },
+                {
+                  'name': '${categoryName.split(' ')[0]} 4',
+                  'price': '₱1,499',
+                  'isStock': true,
+                  'isSale': false,
+                },
+              ];
+
               return CategoryScreen(
                 title: categoryName,
+                products: sampleProducts,
               );
             },
           );
@@ -85,6 +124,10 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+}
+
+Future<void> signOut() async {
+  await FirebaseAuth.instance.signOut();
 }
 
 
