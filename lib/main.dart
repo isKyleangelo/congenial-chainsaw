@@ -21,7 +21,9 @@ import 'providers/product_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform.copyWith(
+      databaseURL: 'https://finalproject-91acc-default-rtdb.firebaseio.com', // <-- Your actual database URL
+    ),
   );
   runApp(
     MultiProvider(
@@ -73,37 +75,8 @@ class MyApp extends StatelessWidget {
           final categoryName = settings.name!.split('/category/')[1];
           return MaterialPageRoute(
             builder: (context) {
-              // Sample products for the category
-              final List<Map<String, dynamic>> sampleProducts = [
-                {
-                  'name': '${categoryName.split(' ')[0]} 1',
-                  'price': '₱999',
-                  'isStock': true,
-                  'isSale': false,
-                },
-                {
-                  'name': '${categoryName.split(' ')[0]} 2',
-                  'price': '₱1,299',
-                  'isStock': true,
-                  'isSale': true,
-                },
-                {
-                  'name': '${categoryName.split(' ')[0]} 3',
-                  'price': '₱899',
-                  'isStock': false,
-                  'isSale': false,
-                },
-                {
-                  'name': '${categoryName.split(' ')[0]} 4',
-                  'price': '₱1,499',
-                  'isStock': true,
-                  'isSale': false,
-                },
-              ];
-
               return CategoryScreen(
                 title: categoryName,
-                products: sampleProducts,
               );
             },
           );

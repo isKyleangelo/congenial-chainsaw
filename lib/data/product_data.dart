@@ -4,20 +4,23 @@ import '../models/product.dart';
 class ProductProvider with ChangeNotifier {
   final List<Product> _products = [
     Product(
+      category: 'plain',
       name: 'HLCK White Logo Shirt',
-      price: '₱899',
+      price: '₱699',
       imageUrl: 'assets/images/onlyin_hlck/white.png',
       description:
           'Stay effortlessly fresh with the HLCK White Tee — the ultimate cotton classic, made for all-day comfort and clean style. Crisp, breathable, and soft, this white essential pairs with everything. Available exclusively at HLCK — your source for standout basics.',
     ),
     Product(
+      category: 'plain',
       name: 'HLCK Black Logo Shirt',
-      price: '₱899',
+      price: '₱749',
       imageUrl: 'assets/images/onlyin_hlck/black.png',
       description:
           'Elevate your everyday look with the HLCK Black Tee — sleek, soft cotton designed to keep you cool and confident. This deep black staple is perfect for any occasion. Get it exclusively at HLCK and own your style like no one else.',
     ),
     Product(
+      category: 'plain',
       name: 'HLCK Green Logo Shirt',
       price: '₱899',
       imageUrl: 'assets/images/onlyin_hlck/green.png',

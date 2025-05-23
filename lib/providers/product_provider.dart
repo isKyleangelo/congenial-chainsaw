@@ -1,32 +1,80 @@
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 
 class ProductProvider with ChangeNotifier {
-  final List<Product> _products = [
-    Product(
-      name: 'HLCK White Logo Shirt',
-      price: '₱899',
-      imageUrl: 'assets/images/onlyin_hlck/white.png',
-      description: 'Stay effortlessly fresh with the HLCK White Tee — the ultimate cotton classic, made for all-day comfort and clean style. Crisp, breathable, and soft, this white essential pairs with everything. Available exclusively at HLCK — your source for standout basics.',
-    ),
-    Product(
-      name: 'HLCK Black Logo Shirt',
-      price: '₱899',
-      imageUrl: 'assets/images/onlyin_hlck/black.png',
-      description: 'Elevate your everyday look with the HLCK Black Tee — sleek, soft cotton designed to keep you cool and confident. This deep black staple is perfect for any occasion. Get it exclusively at HLCK and own your style like no one else.',
-    ),
-    Product(
-      name: 'HLCK Green Logo Shirt',
-      price: '₱899',
-      imageUrl: 'assets/images/onlyin_hlck/green.png',
-      description: 'Bring fresh energy with the HLCK Green Tee. Crafted from comfy cotton and bursting with rich green vibes, it’s the perfect twist to your wardrobe. Exclusively available at HLCK — because unique style deserves a unique home.',
-    ),
-  ];
+  final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref('products');
+  final Reference _storageRef = FirebaseStorage.instance.ref('product_images');
 
-  List<Product> get products => List.unmodifiable(_products);
+  final List<Product> _products = [];
+  List<Product> get products => _products;
 
-  void addProduct(Product product) {
-    _products.add(product);
-    notifyListeners();
+  Future<void> addProduct(Product product) async {
+    try {
+      String? uploadedImageUrl;
+
+      // 1. Upload image to Cloud Storage if imageBytes exist
+      if (product.imageBytes != null && product.imageBytes!.isNotEmpty && product.imageUrl != null && product.imageUrl!.isNotEmpty) {
+        final fileName = '${DateTime.now().millisecondsSinceEpoch}_${product.imageUrl}';
+        final imageRef = _storageRef.child(fileName);
+
+        UploadTask uploadTask = imageRef.putData(
+          product.imageBytes!,
+          SettableMetadata(contentType: 'image/png'),
+        );
+
+        TaskSnapshot snapshot = await uploadTask;
+        uploadedImageUrl = await snapshot.ref.getDownloadURL();
+      }
+
+      // 2. Prepare product data with image URL
+      final productToSave = Product(
+        name: product.name,
+        price: product.price,
+        description: product.description,
+        category: product.category,
+        imageUrl: uploadedImageUrl ?? '',
+      );
+
+      // 3. Save product to Realtime Database
+      final newProductRef = _databaseRef.push();
+      productToSave.id = newProductRef.key;
+
+      await newProductRef.set(productToSave.toJson());
+
+      // 4. Fetch products again to update the UI
+      await fetchProducts();
+    } catch (e) {
+      debugPrint('Error adding product: $e');
+    }
+  }
+
+  Future<void> fetchProducts() async {
+    try {
+      final snapshot = await _databaseRef.get();
+      final List<Product> loadedProducts = [];
+      if (snapshot.exists) {
+        final data = snapshot.value as Map<dynamic, dynamic>;
+        data.forEach((key, value) {
+          loadedProducts.add(
+            Product(
+              id: key,
+              name: value['name'] ?? '',
+              price: value['price'] ?? '',
+              imageUrl: value['imageUrl'] ?? '',
+              description: value['description'] ?? '',
+              category: value['category'] ?? '',
+            ),
+          );
+        });
+      }
+      _products
+        ..clear()
+        ..addAll(loadedProducts);
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error fetching products: $e');
+    }
   }
 }

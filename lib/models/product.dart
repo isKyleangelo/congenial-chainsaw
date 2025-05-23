@@ -1,32 +1,44 @@
 import 'dart:typed_data';
 
 class Product {
+  String? id;
   final String name;
   final String price;
+  String? imageUrl;
   final String description;
-  final String imageUrl;
-  final bool isStock;
-  final bool isSale;
+  final String category;
   final Uint8List? imageBytes;
 
   Product({
+    this.id,
     required this.name,
     required this.price,
+    this.imageUrl,
     required this.description,
-    required this.imageUrl,
-    this.isStock = true,
-    this.isSale = false,
+    required this.category,
     this.imageBytes,
   });
 
-  factory Product.fromMap(Map<String, dynamic> map) {
-    return Product(
-      name: map['name'] ?? '',
-      price: map['price'] ?? '',
-      description: map['description'] ?? '',
-      imageUrl: map['imageUrl'] ?? '',
-      isStock: map['isStock'] ?? true,
-      isSale: map['isSale'] ?? false,
-    );
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'price': price,
+      'imageUrl': imageUrl,
+      'description': description,
+      'category': category,
+    };
   }
+}
+
+void main() {
+  var product = Product(
+    name: 'Tee',
+    price: '100',
+    imageUrl: 'some_url',
+    description: 'desc',
+    category: 'plain',
+  );
+
+  print(product.toJson());
 }

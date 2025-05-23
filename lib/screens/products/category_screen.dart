@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../widgets/bottom_nav_bar.dart';
 import '../../widgets/hlck_app_bar.dart';
 import '../../routes.dart';
@@ -6,19 +7,24 @@ import '../home/home.dart';
 import 'all_products_screen.dart';
 import '../wishlist/wishlist_screen.dart';
 import '../profile/account_screen.dart';
+import '../../../providers/product_provider.dart';
 
 class CategoryScreen extends StatelessWidget {
   final String title;
-  final List<Map<String, dynamic>> products;
 
   const CategoryScreen({
     super.key,
     required this.title,
-    required this.products,
   });
 
   @override
   Widget build(BuildContext context) {
+    final allProducts = context.watch<ProductProvider>().products;
+    final products = allProducts.where((p) =>
+      p.category.replaceAll(' ', '').toLowerCase() ==
+      title.replaceAll(' ', '').toLowerCase()
+    ).toList();
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: HLCKAppBar(
@@ -37,10 +43,8 @@ class CategoryScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final product = products[index];
           return ProductCard(
-            name: product['name'],
-            price: product['price'],
-            isStock: product['isStock'],
-            isSale: product['isSale'],
+            name: product.name,
+            price: product.price,
           );
         },
       ),
@@ -200,4 +204,10 @@ class ProductCard extends StatelessWidget {
       ),
     );
   }
+}
+
+void _navigateToCategory(BuildContext context, String categoryName) {
+  Navigator.of(context).pushWithTransition(
+    CategoryScreen(title: categoryName),
+  );
 }

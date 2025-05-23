@@ -36,11 +36,11 @@ class ProductDetailsScreen extends StatelessWidget {
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: product.imageUrl.isNotEmpty
+                child: product.imageUrl?.isNotEmpty == true
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: Image.asset(
-                          product.imageUrl,
+                          product.imageUrl ?? '', // <-- Pass the String, not a bool
                           fit: BoxFit.contain,
                         ),
                       )
@@ -174,12 +174,11 @@ class ProductDetailsScreen extends StatelessWidget {
           Expanded(
             child: Container(
               color: Colors.grey.shade200,
-              child: product.imageUrl.isNotEmpty
+              child: product.imageUrl?.isNotEmpty == true
                   ? ClipRRect(
-                      borderRadius:
-                          const BorderRadius.vertical(top: Radius.circular(4)),
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
                       child: Image.asset(
-                        product.imageUrl,
+                        product.imageUrl ?? '',
                         fit: BoxFit.cover,
                       ),
                     )

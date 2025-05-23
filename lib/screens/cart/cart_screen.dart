@@ -24,63 +24,69 @@ class CartScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Cart item
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Product image
-                  Container(
-                    width: 80,
-                    height: 80,
-                    color: Colors.grey.shade200,
-                    child: const Center(
-                      child: Text(
-                        '[Image]',
-                        style: TextStyle(color: Colors.grey),
+            // Cart item card
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              elevation: 0,
+              margin: EdgeInsets.zero,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Product image
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: Image.asset(
+                        'assets/images/onlyin_hlck/green.png', // Replace with your product image
+                        width: 64,
+                        height: 64,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  // Product details
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Item 1',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                    const SizedBox(width: 16),
+                    // Product details
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            'Item 1',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          '₱4,999',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                          SizedBox(height: 4),
+                          Text(
+                            'Size: 9',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey,
+                            ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 4),
+                          Text(
+                            '₱4,999',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  // Delete icon
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () {},
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    iconSize: 20,
-                  ),
-                ],
+                    // Delete icon
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline),
+                      onPressed: () {},
+                      splashRadius: 20,
+                    ),
+                  ],
+                ),
               ),
             ),
-
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
 
             // Promo code
             Row(
@@ -90,12 +96,14 @@ class CartScreen extends StatelessWidget {
                     decoration: InputDecoration(
                       hintText: 'Enter Promo Code',
                       hintStyle: TextStyle(color: Colors.grey.shade400),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(4),
+                      border: InputBorder.none,
+                      enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey.shade300),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.green.shade200),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 4),
                     ),
                   ),
                 ),
@@ -103,8 +111,10 @@ class CartScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.green.shade50,
+                    foregroundColor: Colors.green.shade900,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
                     ),
@@ -113,84 +123,73 @@ class CartScreen extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 24),
 
             // Order summary
-            const Text(
-              'Basket Total',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              elevation: 0,
+              margin: EdgeInsets.zero,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text('Basket Total'),
+                        Text('₱4,999', style: TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text('International Standard Delivery'),
+                        Text('Free', style: TextStyle(color: Colors.green)),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text('Discount', style: TextStyle(color: Colors.red)),
+                        Text('Free', style: TextStyle(color: Colors.green)),
+                      ],
+                    ),
+                    const Divider(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text('Total', style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text('₱4,999', style: TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 16),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Subtotal'),
-                Text('₱4,999'),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Withdrawal/Cash/Delivery'),
-                Text(
-                  'Free',
-                  style: TextStyle(color: Colors.green.shade700),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Discount',
-                  style: TextStyle(color: Colors.red),
-                ),
-                Text(
-                  'Free',
-                  style: TextStyle(color: Colors.green.shade700),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const Divider(),
-            const SizedBox(height: 8),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Total',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  '₱4,999',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-
             const Spacer(),
 
             // Checkout button
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .pushWithTransition(const ConfirmCheckoutScreen());
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .pushWithTransition(const ConfirmCheckoutScreen());
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
+                child: const Text('Checkout'),
               ),
-              child: const Text('Checkout'),
             ),
           ],
         ),

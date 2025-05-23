@@ -42,12 +42,13 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyCJOkpGSg3upXVt7SKDB8l0NV7TKHOSSYw',
-    appId: '1:427771018:web:e6ba9e5fb511d2b05d9973',
-    messagingSenderId: '427771018',
-    projectId: 'finalproject-91acc',
     authDomain: 'finalproject-91acc.firebaseapp.com',
+    projectId: 'finalproject-91acc',
     storageBucket: 'finalproject-91acc.firebasestorage.app',
+    messagingSenderId: '427771018',
+    appId: '1:427771018:web:e6ba9e5fb511d2b05d9973',
     measurementId: 'G-YYJV1ZHJKQ',
+    databaseURL: 'https://finalproject-91acc-default-rtdb.firebaseio.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(

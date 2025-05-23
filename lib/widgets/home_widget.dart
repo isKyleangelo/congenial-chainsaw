@@ -221,52 +221,64 @@ class CategoryItem extends StatelessWidget {
     return '';
   }
 
+  String get _categoryName {
+    if (title == 'Plain Tee') return 'plain';
+    if (title == 'Hoodies') return 'hoodies';
+    if (title == 'Graphic Tee') return 'graphic tees';
+    if (title == 'Only in\nHLCK') return 'OG';
+    return title.toLowerCase();
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.asset(
-                  _imagePath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(color: Colors.grey[300]);
-                  },
+        return InkWell(
+          borderRadius: BorderRadius.circular(8.0),
+          onTap: () => _navigateToCategory(context, _categoryName),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image.asset(
+                    _imagePath,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(color: Colors.grey[300]);
+                    },
+                  ),
                 ),
-              ),
-              Center(
-                child: Container(
-                  color: Colors.white.withOpacity(0.2), // 20% transparent background for label
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: 'Saking',
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 40,
-                      letterSpacing: 1,
-                      shadows: [
-                        Shadow(
-                          color: Colors.white,
-                          blurRadius: 8,
-                          offset: Offset(0, 0),
-                        ),
-                      ],
+                Center(
+                  child: Container(
+                    color: Colors.white.withOpacity(0.2), // 20% transparent background for label
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontFamily: 'Saking',
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 40,
+                        letterSpacing: 1,
+                        shadows: [
+                          Shadow(
+                            color: Colors.white,
+                            blurRadius: 8,
+                            offset: Offset(0, 0),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -275,34 +287,8 @@ class CategoryItem extends StatelessWidget {
 }
 
 void _navigateToCategory(BuildContext context, String categoryName) {
-  if (categoryName == 'Only in HLCK' || categoryName == 'Only in\nHLCK') {
-    final onlyInHlckProducts = [
-      {
-        'name': 'White Logo Shirt',
-        'price': '₱1,299',
-        'isStock': true,
-        'isSale': false,
-        'imageUrl': 'assets/images/onlyin_hlck/white_logo1.png',
-        'description': 'Exclusive HLCK white logo shirt. Only available here!',
-      },
-    ];
-    Navigator.of(context).pushWithTransition(
-      CategoryScreen(title: categoryName, products: onlyInHlckProducts),
-    );
-    return;
-  }
-
-  final sampleProducts = List.generate(4, (index) {
-    return {
-      'name': '${categoryName.split(' ')[0]} ${index + 1}',
-      'price': '₱${999 + (index * 100)}',
-      'isStock': index % 3 != 2,
-      'isSale': index % 2 == 0,
-    };
-  });
-
   Navigator.of(context).pushWithTransition(
-    CategoryScreen(title: categoryName, products: sampleProducts),
+    CategoryScreen(title: categoryName),
   );
 }
 
@@ -334,3 +320,4 @@ class LatestDropItem extends StatelessWidget {
     );
   }
 }
+

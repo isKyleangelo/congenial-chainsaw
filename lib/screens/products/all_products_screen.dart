@@ -9,12 +9,47 @@ import '../profile/account_screen.dart';
 import '../../models/product.dart';
 import '../products/product_details_screen.dart';
 
-class AllProductsScreen extends StatelessWidget {
+class AllProductsScreen extends StatefulWidget {
   const AllProductsScreen({super.key});
+
+  @override
+  State<AllProductsScreen> createState() => _AllProductsScreenState();
+}
+
+class _AllProductsScreenState extends State<AllProductsScreen> {
+  String _searchQuery = '';
+  String _sortOption = 'A-Z';
+
+  List<Product> _sortProducts(List<Product> products) {
+    List<Product> sorted = List<Product>.from(products);
+    if (_sortOption == 'A-Z') {
+      sorted.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    } else if (_sortOption == 'By Price') {
+      sorted.sort((a, b) {
+        // Remove non-numeric characters and parse price
+        double priceA = double.tryParse(a.price.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0;
+        double priceB = double.tryParse(b.price.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0;
+        return priceA.compareTo(priceB);
+      });
+    }
+    return sorted;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() =>
+        context.read<ProductProvider>().fetchProducts());
+  }
 
   @override
   Widget build(BuildContext context) {
     final products = context.watch<ProductProvider>().products;
+    final filteredProducts = products
+        .where((product) =>
+            product.name.toLowerCase().contains(_searchQuery.toLowerCase()))
+        .toList();
+    final sortedProducts = _sortProducts(filteredProducts);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -24,7 +59,7 @@ class AllProductsScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 16),
-            // Search Bar
+            // Responsive Search Bar
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               height: 40,
@@ -36,11 +71,23 @@ class AllProductsScreen extends StatelessWidget {
                 children: [
                   Icon(Icons.search, color: Colors.grey[600]),
                   const SizedBox(width: 8.0),
-                  Text(
-                    'Search...',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14.0,
+                  Expanded(
+                    child: TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          _searchQuery = value;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        hintText: 'Search...',
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      style: TextStyle(
+                        color: Colors.grey[800],
+                        fontSize: 14.0,
+                      ),
                     ),
                   ),
                 ],
@@ -50,23 +97,42 @@ class AllProductsScreen extends StatelessWidget {
             // Filter and product count
             Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.filter_list, size: 18),
-                      const SizedBox(width: 4),
-                      Text('Filter', style: TextStyle(color: Colors.grey.shade800)),
-                    ],
-                  ),
+                DropdownButton<String>(
+                  value: _sortOption,
+                  underline: const SizedBox(),
+                  style: TextStyle(color: Colors.grey.shade800, fontSize: 14),
+                  borderRadius: BorderRadius.circular(4),
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'A-Z',
+                      child: Row(
+                        children: [
+                          Icon(Icons.sort_by_alpha, size: 18),
+                          SizedBox(width: 4),
+                          Text('A-Z'),
+                        ],
+                      ),
+                    ),
+                    DropdownMenuItem(
+                      value: 'By Price',
+                      child: Row(
+                        children: [
+                          Icon(Icons.attach_money, size: 18),
+                          SizedBox(width: 4),
+                          Text('By Price'),
+                        ],
+                      ),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      _sortOption = value!;
+                    });
+                  },
                 ),
                 const Spacer(),
                 Text(
-                  '${products.length} product${products.length != 1 ? 's' : ''}',
+                  '${sortedProducts.length} product${sortedProducts.length != 1 ? 's' : ''}',
                   style: TextStyle(color: Colors.grey.shade600),
                 ),
               ],
@@ -75,7 +141,7 @@ class AllProductsScreen extends StatelessWidget {
             // Product Grid
             Expanded(
               child: GridView.builder(
-                itemCount: products.length,
+                itemCount: sortedProducts.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 12,
@@ -83,7 +149,7 @@ class AllProductsScreen extends StatelessWidget {
                   childAspectRatio: 0.7,
                 ),
                 itemBuilder: (context, index) {
-                  final product = products[index];
+                  final product = sortedProducts[index];
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -117,10 +183,7 @@ class AllProductsScreen extends StatelessWidget {
                                       product.imageBytes!,
                                       fit: BoxFit.cover,
                                     )
-                                  : Image.asset(
-                                      product.imageUrl,
-                                      fit: BoxFit.cover,
-                                    ),
+                                  : Image.asset(product.imageUrl ?? '', fit: BoxFit.cover),
                             ),
                           ),
                           Padding(
