@@ -1,79 +1,56 @@
 import 'package:flutter/material.dart';
-import '../../widgets/base_screen.dart';
+import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/hlck_app_bar.dart';
 import '../home/home.dart';
-import 'all_products_screen.dart';
 import '../wishlist/wishlist_screen.dart';
 import '../profile/account_screen.dart';
-import '../../models/product.dart'; // import your model
-import '../../routes.dart';
+import '../../data/product_data.dart'; // <-- Product list
+import '../../models/product.dart'; // <-- Product model
+import '../products/product_details_screen.dart';
+
 
 class ProductDetailsScreen extends StatelessWidget {
-  final Product product;
-  final VoidCallback? onAddToCart;
-  final VoidCallback? onAddToWishlist;
+  final Product product; // this must be the same Product model as in your product list
 
   const ProductDetailsScreen({
-    super.key,
+    Key? key,
     required this.product,
-    this.onAddToCart,
-    this.onAddToWishlist,
-  });
+  }) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreen(
-      title: '',
-      showBackButton: true,
-      showCartIcon: false,
-      currentNavIndex: 1,
-      onNavTap: (index) {
-        switch (index) {
-          case 0:
-            Navigator.of(context)
-                .pushReplacementWithTransition(const HomePage());
-            break;
-          case 1:
-            Navigator.of(context)
-                .pushReplacementWithTransition(const AllProductsScreen());
-            break;
-          case 2:
-            Navigator.of(context)
-                .pushReplacementWithTransition(const WishlistScreen());
-            break;
-          case 3:
-            Navigator.of(context)
-                .pushReplacementWithTransition(const AccountScreen());
-            break;
-        }
-      },
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: const HLCKAppBar(title: 'hlck'),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Product image
+              // Product Image
               Container(
-                height: 220,
+                height: 250,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: product.imageUrl.isNotEmpty
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
+                        child: Image.asset(
                           product.imageUrl,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                         ),
                       )
                     : const Center(
-                        child: Icon(Icons.image, size: 80, color: Colors.grey),
+                        child: Icon(Icons.image, size: 100, color: Colors.grey),
                       ),
               ),
               const SizedBox(height: 24),
-
-              // Product name and price
+              const Divider(),
+              // Product Name and Price
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -84,6 +61,8 @@ class ProductDetailsScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Text(
@@ -91,81 +70,146 @@ class ProductDetailsScreen extends StatelessWidget {
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
-                      color: Colors.green,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
-
-              // Description
+              // Product Description
               Text(
-                product.description,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
-                  height: 1.5,
+                product.description ?? 'No description available.',
+                style: const TextStyle(fontSize: 15, color: Colors.black87),
+              ),
+              const SizedBox(height: 16),
+              const Divider(),
+              const SizedBox(height: 8),
+              // Add to label
+              const Center(
+                child: Text(
+                  'Add to:',
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
                 ),
               ),
-              const SizedBox(height: 32),
-
-              const Text(
-                'Add to:',
-                style: TextStyle(fontSize: 14, color: Colors.black54),
-              ),
-              const SizedBox(height: 12),
-
-              // Buttons
+              const SizedBox(height: 8),
+              // Cart and Wishlist Buttons
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: onAddToCart ?? () {},
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
+                      onPressed: () {
+                        // Add to cart logic here
+                      },
                       child: const Text('CART'),
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: onAddToWishlist ?? () {},
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green.shade100,
-                        foregroundColor: Colors.green.shade900,
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
+                      onPressed: () {
+                        // Add to wishlist logic here
+                      },
                       child: const Text('WISHLIST'),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 32),
             ],
           ),
         ),
       ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: 1,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const HomePage()),
+              );
+              break;
+            case 1:
+              break;
+            case 2:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const WishlistScreen()),
+              );
+              break;
+            case 3:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const AccountScreen()),
+              );
+              break;
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildProductCard(Product product) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: Container(
+              color: Colors.grey.shade200,
+              child: product.imageUrl.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius:
+                          const BorderRadius.vertical(top: Radius.circular(4)),
+                      child: Image.asset(
+                        product.imageUrl,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : const Center(
+                      child: Icon(Icons.image, size: 60, color: Colors.grey),
+                    ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.name,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  product.price,
+                  style: const TextStyle(
+                      color: Colors.green, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
-
-final List<Map<String, dynamic>> allProducts = [
-  // ...other products
-  {
-    'name': 'White Logo Shirt',
-    'price': '₱1,299',
-    'isStock': true,
-    'isSale': false,
-    'imageUrl': 'assets/images/onlyin_hlck/white_logo1.png',
-    'description': 'Exclusive HLCK white logo shirt. Only available here!',
-  },
-];

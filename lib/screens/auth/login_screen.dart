@@ -6,6 +6,7 @@ import '../home/home.dart';
 import '../products/all_products_screen.dart';
 import '../wishlist/wishlist_screen.dart';
 import 'register_screen.dart';
+import '../admin/admin_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,6 +25,18 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _isLoading = true;
     });
+
+    // Check for admin credentials first
+    if (_emailController.text.trim() == 'admin123' &&
+        _passwordController.text == '12345678') {
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const AdminDashboard()),
+      );
+      return;
+    }
 
     try {
       // Log in with Firebase Authentication

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'bottom_nav_bar.dart';
 import 'hlck_app_bar.dart';
@@ -23,45 +24,15 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Search bar
-              Container(
-                margin: const EdgeInsets.only(top: 16.0, bottom: 16.0),
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.search, color: Colors.grey[600]),
-                    const SizedBox(width: 8.0),
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Search',
-                          hintStyle: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14.0,
-                          ),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.only(
-                              bottom: 6.8), // Adjust elevation
-                        ),
-                        onChanged: (value) {
-                          // Handle search input changes here
-                          print('Search query: $value');
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              const SizedBox(height: 16.0),
 
-              // Featured image
+              // Search Bar
+              _buildSearchBar(),
+
+              // Featured Banner Placeholder
               Container(
                 height: 240,
-                margin: const EdgeInsets.only(bottom: 16.0),
+                margin: const EdgeInsets.only(top: 16.0, bottom: 16.0),
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(8.0),
@@ -74,34 +45,22 @@ class HomePage extends StatelessWidget {
                 ),
               ),
 
-              // Category grid (2x2)
+              // Category Grid
               GridView.count(
                 crossAxisCount: 2,
                 crossAxisSpacing: 16.0,
                 mainAxisSpacing: 16.0,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  GestureDetector(
-                    onTap: () => _navigateToCategory(context, 'Plain Tee'),
-                    child: const CategoryItem(title: 'Plain Tee'),
-                  ),
-                  GestureDetector(
-                    onTap: () => _navigateToCategory(context, 'Hoodies'),
-                    child: const CategoryItem(title: 'Hoodies'),
-                  ),
-                  GestureDetector(
-                    onTap: () => _navigateToCategory(context, 'Graphic Tee'),
-                    child: const CategoryItem(title: 'Graphic Tee'),
-                  ),
-                  GestureDetector(
-                    onTap: () => _navigateToCategory(context, 'Only in HLCK'),
-                    child: const CategoryItem(title: 'Only in\nHLCK'),
-                  ),
+                children: const [
+                  CategoryItem(title: 'Plain Tee'),
+                  CategoryItem(title: 'Hoodies'),
+                  CategoryItem(title: 'Graphic Tee'),
+                  CategoryItem(title: 'Only in\nHLCK'),
                 ],
               ),
 
-              // Latest Drops section
+              // Latest Drops Heading
               Padding(
                 padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
                 child: Row(
@@ -121,17 +80,14 @@ class HomePage extends StatelessWidget {
                       },
                       child: const Text(
                         'Shop All',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 14.0,
-                        ),
+                        style: TextStyle(color: Colors.black, fontSize: 14.0),
                       ),
                     ),
                   ],
                 ),
               ),
 
-              // Latest drops grid (2 items)
+              // Latest Drops Items
               GridView.count(
                 crossAxisCount: 2,
                 crossAxisSpacing: 16.0,
@@ -144,7 +100,7 @@ class HomePage extends StatelessWidget {
                 ],
               ),
 
-              // Fanny Pack banner
+              // Fanny Pack Banner
               Container(
                 height: 180,
                 margin: const EdgeInsets.symmetric(vertical: 24.0),
@@ -154,10 +110,7 @@ class HomePage extends StatelessWidget {
                 ),
                 child: Stack(
                   children: [
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      right: 0,
+                    Positioned.fill(
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
@@ -171,7 +124,7 @@ class HomePage extends StatelessWidget {
                                 fontSize: 24.0,
                               ),
                             ),
-                            const SizedBox(height: 80),
+                            const Spacer(),
                             ElevatedButton(
                               onPressed: () {},
                               style: ElevatedButton.styleFrom(
@@ -193,11 +146,10 @@ class HomePage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavBar(
-        currentIndex: 0, // Home tab
+        currentIndex: 0,
         onTap: (index) {
           switch (index) {
             case 0:
-              // Already in home
               break;
             case 1:
               Navigator.of(context)
@@ -217,61 +169,32 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void _navigateToCategory(BuildContext context, String categoryName) {
-    // Custom products for 'Only in HLCK'
-    if (categoryName == 'Only in HLCK' || categoryName == 'Only in\nHLCK') {
-      final List<Map<String, dynamic>> onlyInHlckProducts = [
-        {
-          'name': 'White Logo Shirt',
-          'price': '₱1,299',
-          'isStock': true,
-          'isSale': false,
-          'imageUrl': 'assets/images/onlyin_hlck/white_logo1.png',
-          'description':
-              'Exclusive HLCK white logo shirt. Only available here!',
-        },
-        // Add more exclusive products here if needed
-      ];
-      Navigator.of(context).pushWithTransition(
-        CategoryScreen(
-          title: categoryName,
-          products: onlyInHlckProducts,
-        ),
-      );
-      return;
-    }
-    // Sample products for demonstration
-    final List<Map<String, dynamic>> sampleProducts = [
-      {
-        'name': '${categoryName.split(' ')[0]} 1',
-        'price': '₱999',
-        'isStock': true,
-        'isSale': false,
-      },
-      {
-        'name': '${categoryName.split(' ')[0]} 2',
-        'price': '₱1,299',
-        'isStock': true,
-        'isSale': true,
-      },
-      {
-        'name': '${categoryName.split(' ')[0]} 3',
-        'price': '₱899',
-        'isStock': false,
-        'isSale': false,
-      },
-      {
-        'name': '${categoryName.split(' ')[0]} 4',
-        'price': '₱1,499',
-        'isStock': true,
-        'isSale': false,
-      },
-    ];
-
-    Navigator.of(context).pushWithTransition(
-      CategoryScreen(
-        title: categoryName,
-        products: sampleProducts,
+  Widget _buildSearchBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      height: 40,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.search, color: Colors.grey[600]),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: TextField(
+              decoration: const InputDecoration(
+                hintText: 'Search',
+                hintStyle: TextStyle(color: Colors.grey, fontSize: 14.0),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(bottom: 6.8),
+              ),
+              onChanged: (value) {
+                print('Search query: $value');
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -285,56 +208,61 @@ class CategoryItem extends StatelessWidget {
     required this.title,
   });
 
+  String get _imagePath {
+    if (title == 'Plain Tee') {
+      return 'images/plain/plain_olive.png';
+    } else if (title == 'Hoodies') {
+      return 'images/hoodie/risktaker.png';
+    } else if (title == 'Graphic Tee') {
+      return 'images/graphic_tee/moneybank.png';
+    } else if (title == 'Only in\nHLCK') {
+      return 'images/onlyin_hlck/white_logo1.png';
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Container(
           decoration: BoxDecoration(
-            color: Colors.grey[200],
             borderRadius: BorderRadius.circular(8.0),
           ),
           child: Stack(
+            fit: StackFit.expand,
             children: [
-              // Image or background
-              if (title == 'Only in\nHLCK')
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Center(
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: Image.asset(
-                        'images/onlyin_hlck/white_logo1.png',
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(
-                            Icons.shopping_bag,
-                            color: Colors.white,
-                            size: 40,
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                )
-              else
-                Container(
-                  color: Colors.transparent,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.asset(
+                  _imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(color: Colors.grey[300]);
+                  },
                 ),
-              // Text overlay at bottom
-              Positioned(
-                bottom: 8,
-                left: 8,
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color:
-                        title == 'Only in\nHLCK' ? Colors.white : Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.0,
+              ),
+              Center(
+                child: Container(
+                  color: Colors.white.withOpacity(0.2), // 20% transparent background for label
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontFamily: 'Saking',
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 40,
+                      letterSpacing: 1,
+                      shadows: [
+                        Shadow(
+                          color: Colors.white,
+                          blurRadius: 8,
+                          offset: Offset(0, 0),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -346,24 +274,60 @@ class CategoryItem extends StatelessWidget {
   }
 }
 
+void _navigateToCategory(BuildContext context, String categoryName) {
+  if (categoryName == 'Only in HLCK' || categoryName == 'Only in\nHLCK') {
+    final onlyInHlckProducts = [
+      {
+        'name': 'White Logo Shirt',
+        'price': '₱1,299',
+        'isStock': true,
+        'isSale': false,
+        'imageUrl': 'assets/images/onlyin_hlck/white_logo1.png',
+        'description': 'Exclusive HLCK white logo shirt. Only available here!',
+      },
+    ];
+    Navigator.of(context).pushWithTransition(
+      CategoryScreen(title: categoryName, products: onlyInHlckProducts),
+    );
+    return;
+  }
+
+  final sampleProducts = List.generate(4, (index) {
+    return {
+      'name': '${categoryName.split(' ')[0]} ${index + 1}',
+      'price': '₱${999 + (index * 100)}',
+      'isStock': index % 3 != 2,
+      'isSale': index % 2 == 0,
+    };
+  });
+
+  Navigator.of(context).pushWithTransition(
+    CategoryScreen(title: categoryName, products: sampleProducts),
+  );
+}
+
 class LatestDropItem extends StatelessWidget {
   const LatestDropItem({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).pushWithTransition(const AllProductsScreen());
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: const Center(
-          child: Text(
-            '[Product Image]',
-            style: TextStyle(color: Colors.grey),
+    return Hero(
+      tag: 'latest-drop',
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).pushWithTransition(const AllProductsScreen());
+        },
+        borderRadius: BorderRadius.circular(8.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: const Center(
+            child: Text(
+              '[Product Image]',
+              style: TextStyle(color: Colors.grey),
+            ),
           ),
         ),
       ),
