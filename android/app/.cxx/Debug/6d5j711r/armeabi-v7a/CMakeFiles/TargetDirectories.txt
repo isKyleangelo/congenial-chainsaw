@@ -1,0 +1,2 @@
+C:/Users/User/congenial-chainsaw/android/app/.cxx/Debug/6d5j711r/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/User/congenial-chainsaw/android/app/.cxx/Debug/6d5j711r/armeabi-v7a/CMakeFiles/rebuild_cache.dir
