@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'bottom_nav_bar.dart';
 import 'hlck_app_bar.dart';
 import 'common_drawer.dart';
@@ -8,8 +9,38 @@ import '../screens/wishlist/wishlist_screen.dart';
 import '../screens/profile/account_screen.dart';
 import '../routes.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<Map<String, dynamic>> latestProducts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLatestProducts();
+  }
+
+  Future<void> _loadLatestProducts() async {
+    final QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('products')
+        .orderBy('createdAt', descending: true)
+        .limit(2)
+        .get();
+
+    setState(() {
+      latestProducts = snapshot.docs
+          .map((doc) => {
+                ...doc.data() as Map<String, dynamic>,
+                'id': doc.id,
+              })
+          .toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,20 +123,7 @@ class HomePage extends StatelessWidget {
               ),
 
               // Latest Drops Items
-              SizedBox(
-                height: 180, // Adjust as needed
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: const [
-                    LatestDropItem(),
-                    LatestDropItem(),
-                  ],
-                ),
-              ),
+              _buildLatestDrops(),
 
               // Fanny Pack Banner
               Container(
@@ -201,6 +219,35 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+// In the _buildLatestDrops() method, add debug info:
+  Widget _buildLatestDrops() {
+    return SizedBox(
+      height: 180,
+      child: latestProducts.isEmpty
+          ? const Center(child: Text("No products yet"))
+          : GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16.0,
+                mainAxisSpacing: 16.0,
+              ),
+              itemCount: latestProducts.length,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                final product = latestProducts[index];
+                print(
+                    'Product image URL: ${product['imageUrl']}'); // Debug print
+                return LatestDropItem(
+                  name: product['name'],
+                  price: product['price'].toString(),
+                  imageUrl: product['imageUrl'],
+                );
+              },
+            ),
     );
   }
 }
@@ -330,12 +377,21 @@ void _navigateToCategory(BuildContext context, String categoryName) {
 }
 
 class LatestDropItem extends StatelessWidget {
-  const LatestDropItem({super.key});
+  final String name;
+  final String price;
+  final String imageUrl;
+
+  const LatestDropItem({
+    super.key,
+    required this.name,
+    required this.price,
+    required this.imageUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Hero(
-      tag: 'latest-drop',
+      tag: 'latest-drop-$name',
       child: InkWell(
         onTap: () {
           Navigator.of(context).push(
@@ -348,11 +404,36 @@ class LatestDropItem extends StatelessWidget {
             color: Colors.grey[200],
             borderRadius: BorderRadius.circular(8.0),
           ),
-          child: const Center(
-            child: Text(
-              '[Product Image]',
-              style: TextStyle(color: Colors.grey),
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.network(
+                imageUrl,
+                height: 80,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(Icons.error);
+                },
+              ),
+              const SizedBox(height: 8),
+              Text(
+                name,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                '₱$price',
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                ),
+              ),
+            ],
           ),
         ),
       ),

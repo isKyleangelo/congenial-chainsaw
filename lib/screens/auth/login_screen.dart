@@ -26,18 +26,6 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    // Check for admin credentials first
-    if (_emailController.text.trim() == 'admin123' &&
-        _passwordController.text == '12345678') {
-      setState(() {
-        _isLoading = false;
-      });
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const AdminDashboard()),
-      );
-      return;
-    }
-
     try {
       // Log in with Firebase Authentication
       await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -45,10 +33,23 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text.trim(),
       );
 
-      // Navigate to HomePage
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomePage()),
-      );
+      // Get the current user and their token claims
+      final user = FirebaseAuth.instance.currentUser;
+      final idTokenResult = await user?.getIdTokenResult(true);
+
+      // Check for isAdmin or admin claim
+      final isAdmin = idTokenResult?.claims?['isAdmin'] == true ||
+          idTokenResult?.claims?['admin'] == true;
+
+      if (isAdmin) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const AdminDashboard()),
+        );
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const HomePage()),
+        );
+      }
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message ?? 'Login failed')),

@@ -5,6 +5,7 @@ import '../routes.dart';
 import '../screens/profile_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../services/auth_service.dart';
+import '../screens/admin/admin_dashboard.dart'; // Add this import
 
 class SidePanel extends StatelessWidget {
   final VoidCallback onClose;
@@ -62,7 +63,8 @@ class SidePanel extends StatelessWidget {
                         width: 80,
                         height: 80,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => const Icon(
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
                           Icons.person,
                           size: 40,
                           color: Colors.white,
@@ -89,9 +91,7 @@ class SidePanel extends StatelessWidget {
                 return Column(
                   children: [
                     Text(
-                      displayName.isNotEmpty
-                          ? 'Hi, $displayName!'
-                          : 'Welcome!',
+                      displayName.isNotEmpty ? 'Hi, $displayName!' : 'Welcome!',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -128,6 +128,27 @@ class SidePanel extends StatelessWidget {
               onTap: () {
                 onClose();
                 // Navigate to address screen
+              },
+            ),
+            // Only show Admin Dashboard if admin: true
+            FutureBuilder<Map<String, dynamic>?>(
+              future: _getUserData(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox.shrink();
+                }
+                final userData = snapshot.data;
+                if (userData != null && userData['isAdmin'] == true) {
+                  return _buildNavigationItem(
+                    icon: Icons.location_on_outlined,
+                    label: 'Admin Dashboard',
+                    onTap: () {
+                      onClose();
+                      Navigator.of(context).pushWithTransition(const AdminDashboard());
+                    },
+                  );
+                }
+                return const SizedBox.shrink();
               },
             ),
             _buildNavigationItem(

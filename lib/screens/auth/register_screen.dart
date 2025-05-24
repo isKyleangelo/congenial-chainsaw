@@ -6,7 +6,7 @@ import '../home/home.dart';
 import '../products/all_products_screen.dart';
 import '../wishlist/wishlist_screen.dart';
 import '../../widgets/home_widget.dart'; // <-- Use this import for HomePage
-
+import '../admin/admin_dashboard.dart'; // Import your admin dashboard
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -99,6 +99,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
       print('An error occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('An error occurred: $e')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _loginUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _showOverlay(context);
+
+    try {
+      // Log in with Firebase Authentication
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      final user = FirebaseAuth.instance.currentUser;
+      final idTokenResult = await user?.getIdTokenResult(true);
+      final isAdmin = idTokenResult?.claims?['isAdmin'] == true ||
+          idTokenResult?.claims?['admin'] == true;
+
+      if (isAdmin) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const AdminDashboard()),
+        );
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const HomePage()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Login failed')),
       );
     } finally {
       if (mounted) {

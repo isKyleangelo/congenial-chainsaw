@@ -143,3 +143,31 @@ class MyApp extends StatelessWidget {
 Future<void> signOut() async {
   await FirebaseAuth.instance.signOut();
 }
+
+class CategoryScreen extends StatelessWidget {
+  final String title;
+  final List<Map<String, Object>> products;
+
+  const CategoryScreen({
+    super.key,
+    required this.title,
+    required this.products,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: ListView.builder(
+        itemCount: products.length,
+        itemBuilder: (context, index) {
+          final product = products[index];
+          return ListTile(
+            title: Text(product['name'] as String),
+            subtitle: Text(product['price'] as String),
+          );
+        },
+      ),
+    );
+  }
+}
