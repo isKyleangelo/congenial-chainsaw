@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'bottom_nav_bar.dart';
 import 'hlck_app_bar.dart';
@@ -79,7 +78,8 @@ class HomePage extends StatelessWidget {
                     TextButton(
                       onPressed: () {
                         Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const AllProductsScreen()),
+                          MaterialPageRoute(
+                              builder: (_) => const AllProductsScreen()),
                         );
                       },
                       child: const Text(
@@ -128,7 +128,8 @@ class HomePage extends StatelessWidget {
                           fontSize: 24.0,
                         ),
                       ),
-                      const SizedBox(height: 24), // <-- Replace Spacer with SizedBox
+                      const SizedBox(
+                          height: 24), // <-- Replace Spacer with SizedBox
                       ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
@@ -259,8 +260,10 @@ class CategoryItem extends StatelessWidget {
                 ),
                 Center(
                   child: Container(
-                    color: Colors.white.withOpacity(0.2), // 20% transparent background for label
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    color: Colors.white.withOpacity(
+                        0.2), // 20% transparent background for label
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     child: Text(
                       title,
                       textAlign: TextAlign.center,
@@ -314,6 +317,10 @@ void _navigateToCategory(BuildContext context, String categoryName) {
       'price': '₱${999 + (index * 100)}',
       'isStock': index % 3 != 2,
       'isSale': index % 2 == 0,
+      'imageUrl':
+          'assets/images/sample_product.png', // <-- Add a valid image path
+      'description':
+          'Sample description for ${categoryName.split(' ')[0]} ${index + 1}', // <-- Add a description
     };
   });
 
@@ -352,4 +359,3 @@ class LatestDropItem extends StatelessWidget {
     );
   }
 }
-

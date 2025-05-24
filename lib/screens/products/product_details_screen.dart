@@ -4,19 +4,17 @@ import '../../widgets/hlck_app_bar.dart';
 import '../home/home.dart';
 import '../wishlist/wishlist_screen.dart';
 import '../profile/account_screen.dart';
-import '../../data/product_data.dart'; // <-- Product list
+// <-- Product list
 import '../../models/product.dart'; // <-- Product model
-import '../products/product_details_screen.dart';
-
 
 class ProductDetailsScreen extends StatelessWidget {
-  final Product product; // this must be the same Product model as in your product list
+  final Product
+      product; // this must be the same Product model as in your product list
 
   const ProductDetailsScreen({
-    Key? key,
+    super.key,
     required this.product,
-  }) : super(key: key);
-
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +38,8 @@ class ProductDetailsScreen extends StatelessWidget {
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: Image.asset(
-                          product.imageUrl ?? '', // <-- Pass the String, not a bool
+                          product.imageUrl ??
+                              '', // <-- Pass the String, not a bool
                           fit: BoxFit.contain,
                         ),
                       )
@@ -176,7 +175,8 @@ class ProductDetailsScreen extends StatelessWidget {
               color: Colors.grey.shade200,
               child: product.imageUrl?.isNotEmpty == true
                   ? ClipRRect(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                      borderRadius:
+                          const BorderRadius.vertical(top: Radius.circular(4)),
                       child: Image.asset(
                         product.imageUrl ?? '',
                         fit: BoxFit.cover,

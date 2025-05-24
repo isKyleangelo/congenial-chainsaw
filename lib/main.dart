@@ -19,11 +19,23 @@ import 'providers/product_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform.copyWith(
-      databaseURL: 'https://finalproject-91acc-default-rtdb.firebaseio.com', // <-- Your actual database URL
-    ),
-  );
+
+  try {
+    if (Firebase.apps.isEmpty) {
+      print('Initializing Firebase...');
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform.copyWith(
+          databaseURL: 'https://finalproject-91acc-default-rtdb.firebaseio.com',
+        ),
+      );
+      print('Firebase initialized!');
+    } else {
+      print('Firebase already initialized.');
+    }
+  } catch (e) {
+    print('Firebase init error: $e');
+  }
+
   runApp(
     MultiProvider(
       providers: [
@@ -54,12 +66,15 @@ class MyApp extends StatelessWidget {
         ),
       ),
       navigatorKey: NavigationService().navigatorKey,
-      // REMOVE initialRoute and use home with StreamBuilder
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
+          print(
+              'Auth state change: connection=${snapshot.connectionState}, user=${snapshot.data}');
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
           }
           if (snapshot.hasData) {
             return const HomePage();
@@ -85,8 +100,7 @@ class MyApp extends StatelessWidget {
           final categoryName = settings.name!.split('/category/')[1];
           return MaterialPageRoute(
             builder: (context) {
-              // Sample products for the category
-              final List<Map<String, dynamic>> sampleProducts = [
+              final List<Map<String, Object>> sampleProducts = [
                 {
                   'name': '${categoryName.split(' ')[0]} 1',
                   'price': '₱999',
@@ -129,5 +143,3 @@ class MyApp extends StatelessWidget {
 Future<void> signOut() async {
   await FirebaseAuth.instance.signOut();
 }
-
-

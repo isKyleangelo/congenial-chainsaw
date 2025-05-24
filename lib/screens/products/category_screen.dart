@@ -9,11 +9,25 @@ class CategoryScreen extends StatelessWidget {
   const CategoryScreen({
     super.key,
     required this.title,
+<<<<<<< HEAD
     required this.products,
+=======
+    required List<Map<String, Object>> products,
+>>>>>>> dd75630cb1ddbd11d31907c07c8f69d7b0f439c1
   });
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
+=======
+    final allProducts = context.watch<ProductProvider>().products;
+    final products = allProducts
+        .where((p) =>
+            p.category.replaceAll(' ', '').toLowerCase() ==
+            title.replaceAll(' ', '').toLowerCase())
+        .toList();
+
+>>>>>>> dd75630cb1ddbd11d31907c07c8f69d7b0f439c1
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: HLCKAppBar(
@@ -192,6 +206,7 @@ class ProductCard extends StatelessWidget {
   }
 }
 
+<<<<<<< HEAD
 void navigateToCategory(BuildContext context, String categoryName, List<Map<String, dynamic>> products) {
   Navigator.push(
     context,
@@ -200,6 +215,13 @@ void navigateToCategory(BuildContext context, String categoryName, List<Map<Stri
         title: categoryName,
         products: products,
       ),
+=======
+void _navigateToCategory(BuildContext context, String categoryName) {
+  Navigator.of(context).pushWithTransition(
+    CategoryScreen(
+      title: categoryName,
+      products: [],
+>>>>>>> dd75630cb1ddbd11d31907c07c8f69d7b0f439c1
     ),
   );
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../widgets/bottom_nav_bar.dart';
-import '../../routes.dart';
 import '../home/home.dart';
 import '../products/all_products_screen.dart';
 import '../wishlist/wishlist_screen.dart';
@@ -40,7 +39,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _overlayEntry?.remove();
     _overlayEntry = null;
   }
-
 
   Future<void> _registerUser() async {
     if (!_acceptTerms) {
