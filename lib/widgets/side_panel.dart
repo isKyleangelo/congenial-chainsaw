@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../routes.dart';
 import '../screens/profile_screen.dart';
+import '../screens/auth/login_screen.dart';
+import '../services/auth_service.dart';
 
 class SidePanel extends StatelessWidget {
   final VoidCallback onClose;
@@ -10,8 +14,22 @@ class SidePanel extends StatelessWidget {
     required this.onClose,
   });
 
+  Future<Map<String, dynamic>?> _getUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      return doc.data();
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Container(
       width: 280,
       color: Colors.black,
@@ -38,37 +56,59 @@ class SidePanel extends StatelessWidget {
               radius: 40,
               backgroundColor: Colors.teal,
               child: ClipOval(
-                child: Image.network(
-                  'https://via.placeholder.com/80', // Placeholder image
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const Icon(
-                    Icons.person,
-                    size: 40,
-                    color: Colors.white,
-                  ),
-                ),
+                child: user?.photoURL != null
+                    ? Image.network(
+                        user!.photoURL!,
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => const Icon(
+                          Icons.person,
+                          size: 40,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(
+                        Icons.person,
+                        size: 40,
+                        color: Colors.white,
+                      ),
               ),
             ),
             const SizedBox(height: 16),
 
-            // User name and email
-            const Text(
-              'Hi, Kyle Kuzma!',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'kylekuzma85@gmail.com',
-              style: TextStyle(
-                color: Colors.grey.shade400,
-                fontSize: 14,
-              ),
+            // User name and email from Firestore
+            FutureBuilder<Map<String, dynamic>?>(
+              future: _getUserData(),
+              builder: (context, snapshot) {
+                final userData = snapshot.data;
+                final firstName = userData?['firstName'] ?? '';
+                final lastName = userData?['lastName'] ?? '';
+                final displayName = '$firstName $lastName'.trim();
+
+                return Column(
+                  children: [
+                    Text(
+                      displayName.isNotEmpty
+                          ? 'Hi, $displayName!'
+                          : 'Welcome!',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      user?.email ?? '',
+                      style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
 
             const SizedBox(height: 40),
@@ -121,15 +161,12 @@ class SidePanel extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(20),
               child: TextButton.icon(
-                onPressed: () {
-                  onClose();
-                  // Handle logout
-                },
+                onPressed: () => AuthService.logout(context),
                 icon: const Icon(
                   Icons.logout_outlined,
                   color: Colors.white70,
                 ),
-                label: Text(
+                label: const Text(
                   'Logout',
                   style: TextStyle(
                     color: Colors.white70,
@@ -138,6 +175,7 @@ class SidePanel extends StatelessWidget {
                 ),
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
+                  minimumSize: const Size.fromHeight(48),
                 ),
               ),
             ),

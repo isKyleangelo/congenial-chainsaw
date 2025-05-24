@@ -3,7 +3,7 @@ import '../widgets/hlck_app_bar.dart';
 import '../widgets/common_drawer.dart';
 import '../routes.dart';
 import 'orders/orders_screen.dart';
-import 'account_details_screen.dart';
+import 'account_details_screen.dart' as account_details;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'auth/login_screen.dart';
 
@@ -62,8 +62,8 @@ class ProfileScreen extends StatelessWidget {
                   icon: Icons.settings_outlined,
                   label: 'Settings',
                   onTap: () {
-                    Navigator.of(context)
-                        .pushWithTransition(const AccountDetailsScreen());
+                    Navigator.of(context).pushWithTransition(
+                        const account_details.AccountDetailsScreen());
                   },
                 ),
               ],
@@ -86,8 +86,8 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.person_outline,
               label: 'Account Details',
               onTap: () {
-                Navigator.of(context)
-                    .pushWithTransition(const AccountDetailsScreen());
+                Navigator.of(context).pushWithTransition(
+                    const account_details.AccountDetailsScreen());
               },
             ),
 

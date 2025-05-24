@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
+import 'dart:io';
 import 'package:provider/provider.dart';
 import '../../providers/product_provider.dart';
 import '../../models/product.dart';
@@ -18,31 +19,91 @@ class _AddProductPageState extends State<AddProductPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _descController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
 
   String _selectedCategory = 'plain'; // Default value
 
-  Future<void> _pickImage() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['png', 'jpg', 'jpeg'],
-      withData: true,
-    );
-    if (result != null && result.files.single.bytes != null) {
-      setState(() {
-        _imageBytes = result.files.single.bytes;
-        _imageName = result.files.single.name;
-      });
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: source,
+        maxWidth: 1280,
+        maxHeight: 1280,
+        imageQuality: 85,
+      );
+
+      if (pickedFile != null) {
+        final File imageFile = File(pickedFile.path);
+        final bytes = await imageFile.readAsBytes();
+
+        setState(() {
+          _imageBytes = bytes;
+          _imageName = pickedFile.name;
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking image: $e')),
+      );
     }
+  }
+
+  void _showImageSourceOptions() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF133024),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Select Image Source',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _ImageSourceOption(
+                  icon: Icons.photo_library,
+                  title: 'Gallery',
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickImage(ImageSource.gallery);
+                  },
+                ),
+                _ImageSourceOption(
+                  icon: Icons.camera_alt,
+                  title: 'Camera',
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickImage(ImageSource.camera);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF181A1B),
-      resizeToAvoidBottomInset: true, // <-- Add this line
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24), // <-- Move padding here
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -76,11 +137,11 @@ class _AddProductPageState extends State<AddProductPage> {
                 child: Column(
                   children: [
                     // Category Dropdown
-                    Align(
+                    const Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'Category:',
-                        style: const TextStyle(color: Colors.white70, fontSize: 14),
+                        style: TextStyle(color: Colors.white70, fontSize: 14),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -125,11 +186,11 @@ class _AddProductPageState extends State<AddProductPage> {
                     _ProductTextField(controller: _descController, label: 'Description:'),
                     const SizedBox(height: 16),
                     // Insert image picker
-                    Align(
+                    const Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'Insert image:',
-                        style: const TextStyle(color: Colors.white70, fontSize: 14),
+                        style: TextStyle(color: Colors.white70, fontSize: 14),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -143,9 +204,9 @@ class _AddProductPageState extends State<AddProductPage> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          onPressed: _pickImage,
-                          icon: const Icon(Icons.upload_file),
-                          label: const Text('Choose Image'),
+                          onPressed: _showImageSourceOptions,
+                          icon: const Icon(Icons.add_photo_alternate),
+                          label: const Text('Add Image'),
                         ),
                         const SizedBox(width: 12),
                         if (_imageName != null)
@@ -162,7 +223,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       const SizedBox(height: 12),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.memory(_imageBytes!, height: 80),
+                        child: Image.memory(_imageBytes!, height: 120),
                       ),
                     ],
                   ],
@@ -180,13 +241,22 @@ class _AddProductPageState extends State<AddProductPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                   ),
                   onPressed: () {
+                    if (_nameController.text.isEmpty ||
+                        _priceController.text.isEmpty ||
+                        _imageBytes == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please fill all required fields')),
+                      );
+                      return;
+                    }
+
                     final product = Product(
                       name: _nameController.text,
                       price: _priceController.text,
                       imageUrl: _imageName ?? '',
                       description: _descController.text,
                       imageBytes: _imageBytes,
-                      category: _selectedCategory, // <-- Add this line
+                      category: _selectedCategory,
                     );
                     context.read<ProductProvider>().addProduct(product);
                     Navigator.pop(context);
@@ -233,6 +303,43 @@ class _ProductTextField extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ImageSourceOption extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+
+  const _ImageSourceOption({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFF181A1B),
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: Icon(icon, color: Colors.white, size: 32),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+          ),
+        ],
+      ),
     );
   }
 }
