@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../routes.dart';
 import '../screens/profile_screen.dart';
-import '../screens/auth/login_screen.dart';
 import '../services/auth_service.dart';
 import '../screens/admin/admin_dashboard.dart'; // Add this import
 
@@ -144,7 +143,8 @@ class SidePanel extends StatelessWidget {
                     label: 'Admin Dashboard',
                     onTap: () {
                       onClose();
-                      Navigator.of(context).pushWithTransition(const AdminDashboard());
+                      Navigator.of(context)
+                          .pushWithTransition(const AdminDashboard());
                     },
                   );
                 }

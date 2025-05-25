@@ -10,107 +10,135 @@ class AdminDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final maxWidth =
+        MediaQuery.of(context).size.width > 500 ? 500.0 : double.infinity;
+
     return Scaffold(
       backgroundColor: const Color(0xFF181A1B),
       body: SafeArea(
         child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Logo and HLCK admin text
-                Column(
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset('assets/images/clover.png', height: 80),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                    // Logo and HLCK admin text
+                    Column(
                       children: [
-                        Text(
-                          'HLCK',
-                          style: TextStyle(
-                            fontFamily: 'Saking', // Use Saking font
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 38,
-                            letterSpacing: 2,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 6),
-                          child: Text(
-                            'admin',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 1,
+                        Image.asset('assets/images/clover.png', height: 80),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              'HLCK',
+                              style: TextStyle(
+                                fontFamily: 'Saking', // Use Saking font
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 38,
+                                letterSpacing: 2,
+                              ),
                             ),
-                          ),
+                            const SizedBox(width: 8),
+                            const Padding(
+                              padding: EdgeInsets.only(bottom: 6),
+                              child: Text(
+                                'admin',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 60),
-                // Dashboard tiles
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  mainAxisSpacing: 24,
-                  crossAxisSpacing: 24,
-                  childAspectRatio: 1.2,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    _DashboardTile(
-                      icon: Icons.bar_chart,
-                      label: 'Sales',
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SalesOverview())),
+                    const SizedBox(height: 60),
+                    // Dashboard tiles
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        int crossAxisCount = constraints.maxWidth > 400 ? 2 : 1;
+                        return GridView.count(
+                          crossAxisCount: crossAxisCount,
+                          shrinkWrap: true,
+                          mainAxisSpacing: 24,
+                          crossAxisSpacing: 24,
+                          childAspectRatio: 1.2,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: [
+                            _DashboardTile(
+                              icon: Icons.bar_chart,
+                              label: 'Sales',
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const SalesOverview())),
+                            ),
+                            _DashboardTile(
+                              icon: Icons.inventory_2,
+                              label: 'Products',
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) =>
+                                          const ProductsOverview())),
+                            ),
+                            _DashboardTile(
+                              icon: Icons.receipt_long,
+                              label: 'Orders',
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const OrdersOverview())),
+                            ),
+                            _DashboardTile(
+                              icon: Icons.people,
+                              label: 'Users',
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const UsersOverview())),
+                            ),
+                          ],
+                        );
+                      },
                     ),
-                    _DashboardTile(
-                      icon: Icons.inventory_2,
-                      label: 'Products',
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProductsOverview())),
-                    ),
-                    _DashboardTile(
-                      icon: Icons.receipt_long,
-                      label: 'Orders',
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OrdersOverview())),
-                    ),
-                    _DashboardTile(
-                      icon: Icons.people,
-                      label: 'Users',
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const UsersOverview())),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                // Logout Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red[700],
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                    const SizedBox(height: 40),
+                    // Logout Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red[700],
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        icon: const Icon(Icons.logout),
+                        label: const Text('Logout'),
+                        onPressed: () {
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (_) => const LoginScreen()),
+                            (route) => false,
+                          );
+                        },
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    icon: const Icon(Icons.logout),
-                    label: const Text('Logout'),
-                    onPressed: () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (_) => const LoginScreen()),
-                        (route) => false,
-                      );
-                    },
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -123,7 +151,8 @@ class _DashboardTile extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-  const _DashboardTile({required this.icon, required this.label, required this.onTap});
+  const _DashboardTile(
+      {required this.icon, required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

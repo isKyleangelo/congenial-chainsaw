@@ -97,11 +97,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.2"
-<<<<<<< HEAD
   file_selector_linux:
-=======
-  ffi:
->>>>>>> dd75630cb1ddbd11d31907c07c8f69d7b0f439c1
     dependency: transitive
     description:
       name: file_selector_linux
@@ -340,6 +336,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1+1"
+  intl:
+    dependency: "direct main"
+    description:
+      name: intl
+      sha256: "3bc132a9dbce73a7e4a21a17d06e1878839ffbf975568bc875c60537824b0c4d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.18.1"
   leak_tracker:
     dependency: transitive
     description:
@@ -396,7 +400,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.16.0"
-<<<<<<< HEAD
   mime:
     dependency: transitive
     description:
@@ -405,8 +408,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
-=======
->>>>>>> dd75630cb1ddbd11d31907c07c8f69d7b0f439c1
   nested:
     dependency: transitive
     description:

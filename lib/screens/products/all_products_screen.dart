@@ -23,12 +23,14 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
   List<Product> _sortProducts(List<Product> products) {
     List<Product> sorted = List<Product>.from(products);
     if (_sortOption == 'A-Z') {
-      sorted.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+      sorted
+          .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     } else if (_sortOption == 'By Price') {
       sorted.sort((a, b) {
-        // Remove non-numeric characters and parse price
-        double priceA = double.tryParse(a.price.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0;
-        double priceB = double.tryParse(b.price.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0;
+        double priceA =
+            double.tryParse(a.price.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0;
+        double priceB =
+            double.tryParse(b.price.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0;
         return priceA.compareTo(priceB);
       });
     }
@@ -38,8 +40,7 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        context.read<ProductProvider>().fetchProducts());
+    Future.microtask(() => context.read<ProductProvider>().fetchProducts());
   }
 
   @override
@@ -59,7 +60,6 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
         child: Column(
           children: [
             const SizedBox(height: 16),
-            // Responsive Search Bar
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               height: 40,
@@ -94,7 +94,6 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            // Filter and product count
             Row(
               children: [
                 DropdownButton<String>(
@@ -138,7 +137,6 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            // Product Grid
             Expanded(
               child: GridView.builder(
                 itemCount: sortedProducts.length,
@@ -155,13 +153,14 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => ProductDetailsScreen(product: product),
+                          builder: (_) =>
+                              ProductDetailsScreen(product: product),
                         ),
                       );
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
@@ -174,16 +173,31 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Product image as main clickable area
                           Expanded(
                             child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                              borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(12)),
                               child: product.imageBytes != null
                                   ? Image.memory(
                                       product.imageBytes!,
                                       fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: double.infinity,
                                     )
-                                  : Image.asset(product.imageUrl ?? '', fit: BoxFit.cover),
+                                  : product.imageUrl != null &&
+                                          product.imageUrl!.startsWith('http')
+                                      ? Image.network(
+                                          product.imageUrl!,
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                        )
+                                      : Image.network(
+                                          product.imageUrl ?? '',
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                        ),
                             ),
                           ),
                           Padding(
@@ -226,15 +240,18 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
         onTap: (index) {
           switch (index) {
             case 0:
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomePage()));
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (_) => const HomePage()));
               break;
             case 1:
               break;
             case 2:
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const WishlistScreen()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (_) => const WishlistScreen()));
               break;
             case 3:
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const AccountScreen()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (_) => const AccountScreen()));
               break;
           }
         },

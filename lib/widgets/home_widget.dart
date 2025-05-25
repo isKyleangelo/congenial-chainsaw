@@ -55,45 +55,25 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 16.0),
-
-              // Search Bar
               _buildSearchBar(),
-
-              // Featured Banner Placeholder
-              Container(
-                height: 240,
-                margin: const EdgeInsets.only(top: 16.0, bottom: 16.0),
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: const Center(
-                  child: Text(
-                    '[Featured Image Placeholder]',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ),
+              const SizedBox(height: 16.0),
+              _buildBanner(),
+              const SizedBox(height: 16.0),
+              GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16.0,
+                mainAxisSpacing: 16.0,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                childAspectRatio:
+                    0.95, // Adjust this value as needed (1.0 is square)
+                children: const [
+                  CategoryItem(title: 'Plain Tee'),
+                  CategoryItem(title: 'Hoodies'),
+                  CategoryItem(title: 'Graphic Tee'),
+                  CategoryItem(title: 'Only in\nHLCK'),
+                ],
               ),
-
-              // Category Grid
-              SizedBox(
-                height: 250, // Adjust as needed
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: const [
-                    CategoryItem(title: 'Plain Tee'),
-                    CategoryItem(title: 'Hoodies'),
-                    CategoryItem(title: 'Graphic Tee'),
-                    CategoryItem(title: 'Only in\nHLCK'),
-                  ],
-                ),
-              ),
-
-              // Latest Drops Heading
               Padding(
                 padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
                 child: Row(
@@ -121,46 +101,10 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-
-              // Latest Drops Items
               _buildLatestDrops(),
-
-              // Fanny Pack Banner
-              Container(
-                height: 180,
-                margin: const EdgeInsets.symmetric(vertical: 24.0),
-                decoration: BoxDecoration(
-                  color: Colors.pink[100],
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Fanny Packs?',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24.0,
-                        ),
-                      ),
-                      const SizedBox(
-                          height: 24), // <-- Replace Spacer with SizedBox
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          minimumSize: const Size(100, 36),
-                        ),
-                        child: const Text('SHOP NOW'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              const SizedBox(height: 24.0),
+              _buildPromoBanner(),
+              const SizedBox(height: 16.0),
             ],
           ),
         ),
@@ -197,8 +141,16 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       height: 40,
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(8.0),
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey[300]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(0, 1),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -213,7 +165,7 @@ class _HomePageState extends State<HomePage> {
                 contentPadding: EdgeInsets.only(bottom: 6.8),
               ),
               onChanged: (value) {
-                print('Search query: $value');
+                print('Search query: \$value');
               },
             ),
           ),
@@ -222,7 +174,71 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-// In the _buildLatestDrops() method, add debug info:
+  Widget _buildBanner() {
+    return Container(
+      height: 180,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: const Center(
+        child: Text(
+          '[Featured Image Placeholder]',
+          style: TextStyle(color: Colors.grey),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPromoBanner() {
+    return Container(
+      padding: const EdgeInsets.all(20.0),
+      decoration: BoxDecoration(
+        color: Colors.pink[100],
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          const Text(
+            'Fanny Packs?',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 24.0,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              minimumSize: const Size(120, 36),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text('SHOP NOW'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildLatestDrops() {
     return SizedBox(
       height: 180,
@@ -239,8 +255,7 @@ class _HomePageState extends State<HomePage> {
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 final product = latestProducts[index];
-                print(
-                    'Product image URL: ${product['imageUrl']}'); // Debug print
+                print('Product image URL: ${product['imageUrl']}');
                 return LatestDropItem(
                   name: product['name'],
                   price: product['price'].toString(),
@@ -315,10 +330,10 @@ class CategoryItem extends StatelessWidget {
                       title,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontFamily: 'Saking',
+                        fontFamily: 'Performa',
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
-                        fontSize: 40,
+                        fontSize: 28,
                         letterSpacing: 1,
                         shadows: [
                           Shadow(

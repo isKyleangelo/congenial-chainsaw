@@ -1,11 +1,12 @@
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 
 class ProductProvider with ChangeNotifier {
-  final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref('products');
-  final Reference _storageRef = FirebaseStorage.instance.ref('product_images');
+  final CollectionReference _firestoreRef =
+      FirebaseFirestore.instance.collection('products');
+  final Reference _storageRef = FirebaseStorage.instance.ref('products/');
 
   final List<Product> _products = [];
   List<Product> get products => _products;
@@ -15,8 +16,12 @@ class ProductProvider with ChangeNotifier {
       String? uploadedImageUrl;
 
       // 1. Upload image to Cloud Storage if imageBytes exist
-      if (product.imageBytes != null && product.imageBytes!.isNotEmpty && product.imageUrl != null && product.imageUrl!.isNotEmpty) {
-        final fileName = '${DateTime.now().millisecondsSinceEpoch}_${product.imageUrl}';
+      if (product.imageBytes != null &&
+          product.imageBytes!.isNotEmpty &&
+          product.imageUrl != null &&
+          product.imageUrl!.isNotEmpty) {
+        final fileName =
+            '${DateTime.now().millisecondsSinceEpoch}_${product.imageUrl}';
         final imageRef = _storageRef.child(fileName);
 
         UploadTask uploadTask = imageRef.putData(
@@ -37,11 +42,14 @@ class ProductProvider with ChangeNotifier {
         imageUrl: uploadedImageUrl ?? '',
       );
 
-      // 3. Save product to Realtime Database
-      final newProductRef = _databaseRef.push();
-      productToSave.id = newProductRef.key;
+      // 3. Save product to Firestore
+      final docRef = await _firestoreRef.add({
+        ...productToSave.toJson(),
+        'createdAt': FieldValue.serverTimestamp(), // ✅ ADD THIS
+      });
 
-      await newProductRef.set(productToSave.toJson());
+      // Optionally set the product's id
+      productToSave.id = docRef.id;
 
       // 4. Fetch products again to update the UI
       await fetchProducts();
@@ -52,22 +60,22 @@ class ProductProvider with ChangeNotifier {
 
   Future<void> fetchProducts() async {
     try {
-      final snapshot = await _databaseRef.get();
+      final snapshot = await _firestoreRef.get();
       final List<Product> loadedProducts = [];
-      if (snapshot.exists) {
-        final data = snapshot.value as Map<dynamic, dynamic>;
-        data.forEach((key, value) {
-          loadedProducts.add(
-            Product(
-              id: key,
-              name: value['name'] ?? '',
-              price: value['price'] ?? '',
-              imageUrl: value['imageUrl'] ?? '',
-              description: value['description'] ?? '',
-              category: value['category'] ?? '',
-            ),
-          );
-        });
+      for (var doc in snapshot.docs) {
+        final data = doc.data() as Map<String, dynamic>;
+        loadedProducts.add(
+          Product(
+            id: doc.id,
+            name: data['name'] ?? '',
+            price: (data['price'] is String)
+                ? data['price']
+                : data['price'].toString(),
+            imageUrl: data['imageUrl'] ?? '',
+            description: data['description'] ?? '',
+            category: data['category'] ?? '',
+          ),
+        );
       }
       _products
         ..clear()

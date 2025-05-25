@@ -4,10 +4,10 @@ class Product {
   String? id;
   final String name;
   final String price;
-  String? imageUrl;
+  final String? imageUrl;
   final String description;
   final String category;
-  final Uint8List? imageBytes;
+  final Uint8List? imageBytes; // for upload only
 
   Product({
     this.id,
@@ -21,24 +21,23 @@ class Product {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      // 🔴 DO NOT SAVE ID TO FIRESTORE
       'name': name,
       'price': price,
-      'imageUrl': imageUrl,
+      'imageUrl': imageUrl ?? '',
       'description': description,
       'category': category,
     };
   }
-}
 
-void main() {
-  var product = Product(
-    name: 'Tee',
-    price: '100',
-    imageUrl: 'some_url',
-    description: 'desc',
-    category: 'plain',
-  );
-
-  print(product.toJson());
+  factory Product.fromJson(Map<String, dynamic> json, {String? id}) {
+    return Product(
+      id: id,
+      name: json['name'] ?? '',
+      price: json['price'] is String ? json['price'] : json['price'].toString(),
+      imageUrl: json['imageUrl'] ?? '',
+      description: json['description'] ?? '',
+      category: json['category'] ?? '',
+    );
+  }
 }
