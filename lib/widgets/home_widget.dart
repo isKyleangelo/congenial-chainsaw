@@ -7,7 +7,6 @@ import '../screens/products/category_screen.dart';
 import '../screens/products/all_products_screen.dart';
 import '../screens/wishlist/wishlist_screen.dart';
 import '../screens/profile/account_screen.dart';
-import '../routes.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,11 +25,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadLatestProducts() async {
+    print('Loading latest products...');
+
     final QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('products')
         .orderBy('createdAt', descending: true)
         .limit(2)
         .get();
+
+    print("Fetched ${snapshot.docs.length} products.");
 
     setState(() {
       latestProducts = snapshot.docs
@@ -65,13 +68,17 @@ class _HomePageState extends State<HomePage> {
                 mainAxisSpacing: 16.0,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                childAspectRatio:
-                    0.95, // Adjust this value as needed (1.0 is square)
-                children: const [
-                  CategoryItem(title: 'Plain Tee'),
-                  CategoryItem(title: 'Hoodies'),
-                  CategoryItem(title: 'Graphic Tee'),
-                  CategoryItem(title: 'Only in\nHLCK'),
+                childAspectRatio: 0.95,
+                children: [
+                  CategoryItem(
+                      title: 'Plain Tee', onTapCategory: _navigateToCategory),
+                  CategoryItem(
+                      title: 'Hoodies', onTapCategory: _navigateToCategory),
+                  CategoryItem(
+                      title: 'Graphic Tee', onTapCategory: _navigateToCategory),
+                  CategoryItem(
+                      title: 'Only in\nHLCK',
+                      onTapCategory: _navigateToCategory),
                 ],
               ),
               Padding(
@@ -148,7 +155,7 @@ class _HomePageState extends State<HomePage> {
           BoxShadow(
             color: Colors.black12,
             blurRadius: 4,
-            offset: Offset(0, 1),
+            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -165,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                 contentPadding: EdgeInsets.only(bottom: 6.8),
               ),
               onChanged: (value) {
-                print('Search query: \$value');
+                print('Search query: $value');
               },
             ),
           ),
@@ -176,7 +183,9 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildBanner() {
     return Container(
-      height: 180,
+      width: double.infinity,
+      height: MediaQuery.of(context).size.width *
+          0.6, // Responsive height (60% of screen width)
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(12),
@@ -184,14 +193,22 @@ class _HomePageState extends State<HomePage> {
           BoxShadow(
             color: Colors.black12,
             blurRadius: 6,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: const Center(
-        child: Text(
-          '[Featured Image Placeholder]',
-          style: TextStyle(color: Colors.grey),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image.asset(
+          'assets/images/S.png',
+          fit: BoxFit.cover, // Fill the whole container
+          width: double.infinity,
+          height: double.infinity,
+          errorBuilder: (context, error, stackTrace) {
+            return const Center(
+              child: Icon(Icons.broken_image, color: Colors.grey, size: 48),
+            );
+          },
         ),
       ),
     );
@@ -207,7 +224,7 @@ class _HomePageState extends State<HomePage> {
           BoxShadow(
             color: Colors.black12,
             blurRadius: 6,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -255,40 +272,51 @@ class _HomePageState extends State<HomePage> {
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 final product = latestProducts[index];
-                print('Product image URL: ${product['imageUrl']}');
                 return LatestDropItem(
                   name: product['name'],
-                  price: product['price'].toString(),
+                  price: '₱${product['price']}',
                   imageUrl: product['imageUrl'],
                 );
               },
             ),
     );
   }
+
+  /// ✅ UPDATED NAVIGATE FUNCTION
+  Future<void> _navigateToCategory(
+      BuildContext context, String categoryKey) async {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CategoryScreen(title: categoryKey),
+      ),
+    );
+  }
 }
 
 class CategoryItem extends StatelessWidget {
   final String title;
+  final Future<void> Function(BuildContext, String) onTapCategory;
 
   const CategoryItem({
     super.key,
     required this.title,
+    required this.onTapCategory,
   });
 
   String get _imagePath {
     if (title == 'Plain Tee') {
-      return 'images/plain/plain_olive.png';
+      return 'assets/images/plain/plain_olive.png';
     } else if (title == 'Hoodies') {
-      return 'images/hoodie/risktaker.png';
+      return 'assets/images/hoodie/risktaker.png';
     } else if (title == 'Graphic Tee') {
-      return 'images/graphic_tee/moneybank.png';
+      return 'assets/images/graphic_tee/moneybank.png';
     } else if (title == 'Only in\nHLCK') {
-      return 'images/onlyin_hlck/white_logo1.png';
+      return 'assets/images/onlyin_hlck/white_logo1.png';
     }
     return '';
   }
 
-  String get _categoryName {
+  String get _categoryKey {
     if (title == 'Plain Tee') return 'plain';
     if (title == 'Hoodies') return 'hoodies';
     if (title == 'Graphic Tee') return 'graphic tees';
@@ -302,7 +330,9 @@ class CategoryItem extends StatelessWidget {
       builder: (context, constraints) {
         return InkWell(
           borderRadius: BorderRadius.circular(8.0),
-          onTap: () => _navigateToCategory(context, _categoryName),
+          onTap: () async {
+            await onTapCategory(context, _categoryKey);
+          },
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
@@ -322,8 +352,7 @@ class CategoryItem extends StatelessWidget {
                 ),
                 Center(
                   child: Container(
-                    color: Colors.white.withOpacity(
-                        0.2), // 20% transparent background for label
+                    color: Colors.white.withOpacity(0.2),
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     child: Text(
@@ -353,42 +382,6 @@ class CategoryItem extends StatelessWidget {
       },
     );
   }
-}
-
-void _navigateToCategory(BuildContext context, String categoryName) {
-  if (categoryName == 'Only in HLCK' || categoryName == 'Only in\nHLCK') {
-    final onlyInHlckProducts = [
-      {
-        'name': 'White Logo Shirt',
-        'price': '₱1,299',
-        'isStock': true,
-        'isSale': false,
-        'imageUrl': 'assets/images/onlyin_hlck/white_logo1.png',
-        'description': 'Exclusive HLCK white logo shirt. Only available here!',
-      },
-    ];
-    Navigator.of(context).pushWithTransition(
-      CategoryScreen(title: categoryName, products: onlyInHlckProducts),
-    );
-    return;
-  }
-
-  final sampleProducts = List.generate(4, (index) {
-    return {
-      'name': '${categoryName.split(' ')[0]} ${index + 1}',
-      'price': '₱${999 + (index * 100)}',
-      'isStock': index % 3 != 2,
-      'isSale': index % 2 == 0,
-      'imageUrl':
-          'assets/images/sample_product.png', // <-- Add a valid image path
-      'description':
-          'Sample description for ${categoryName.split(' ')[0]} ${index + 1}', // <-- Add a description
-    };
-  });
-
-  Navigator.of(context).pushWithTransition(
-    CategoryScreen(title: categoryName, products: sampleProducts),
-  );
 }
 
 class LatestDropItem extends StatelessWidget {
@@ -431,23 +424,8 @@ class LatestDropItem extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 8),
-              Text(
-                name,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                '₱$price',
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                ),
-              ),
+              Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(price, style: const TextStyle(fontWeight: FontWeight.bold)),
             ],
           ),
         ),

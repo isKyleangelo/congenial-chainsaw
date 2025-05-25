@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../widgets/hlck_app_bar.dart';
-import '../widgets/common_drawer.dart';
 import '../routes.dart';
 import 'orders/orders_screen.dart';
 import 'account_details_screen.dart' as account_details;
@@ -12,145 +10,149 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Add MediaQuery to get screen size
     final Size screenSize = MediaQuery.of(context).size;
     final double screenWidth = screenSize.width;
     final double screenHeight = screenSize.height;
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const HLCKAppBar(
-        title: 'Profile',
-        showBackButton: true,
-      ),
-      drawer: const CommonDrawer(),
-      body: Padding(
-        padding: EdgeInsets.all(screenWidth * 0.04), // Responsive padding
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: screenHeight * 0.03),
-
-            // Profile Name
-            Center(
-              child: Text(
-                FirebaseAuth.instance.currentUser?.email ?? 'No Email',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: screenWidth * 0.04,
+              right: screenWidth * 0.04,
+              top: screenHeight * 0.06,
+              bottom: screenHeight * 0.025,
             ),
-
-            SizedBox(height: screenHeight * 0.05),
-
-            // Main menu options
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildCircleMenuButton(
-                  context: context,
-                  icon: Icons.shopping_bag_outlined,
-                  label: 'Orders',
+                SizedBox(height: screenHeight * 0.03),
+
+                // Profile Name
+                Center(
+                  child: Text(
+                    FirebaseAuth.instance.currentUser?.email ?? 'No Email',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: screenHeight * 0.05),
+
+                // Main menu options
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildCircleMenuButton(
+                      context: context,
+                      icon: Icons.shopping_bag_outlined,
+                      label: 'Orders',
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushWithTransition(const OrdersScreen());
+                      },
+                    ),
+                    _buildCircleMenuButton(
+                      context: context,
+                      icon: Icons.settings_outlined,
+                      label: 'Settings',
+                      onTap: () {
+                        Navigator.of(context).pushWithTransition(
+                            const account_details.AccountDetailsScreen());
+                      },
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: screenHeight * 0.05),
+
+                // More menu options
+                _buildMenuOption(
+                  icon: Icons.list_alt_outlined,
+                  label: 'My orders',
                   onTap: () {
                     Navigator.of(context)
                         .pushWithTransition(const OrdersScreen());
                   },
                 ),
-                _buildCircleMenuButton(
-                  context: context,
-                  icon: Icons.settings_outlined,
-                  label: 'Settings',
+
+                const Divider(height: 1),
+
+                _buildMenuOption(
+                  icon: Icons.person_outline,
+                  label: 'Account Details',
                   onTap: () {
                     Navigator.of(context).pushWithTransition(
                         const account_details.AccountDetailsScreen());
                   },
                 ),
+
+                const Divider(height: 1),
+
+                _buildMenuOption(
+                  icon: Icons.support_agent_outlined,
+                  label: 'Customer Service',
+                  onTap: () {},
+                ),
+
+                const Divider(height: 1),
+
+                _buildMenuOption(
+                  icon: Icons.logout_outlined,
+                  label: 'Sign out',
+                  onTap: () async {
+                    await FirebaseAuth.instance.signOut();
+                    if (context.mounted) {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        (route) => false,
+                      );
+                    }
+                  },
+                ),
+
+                const Divider(height: 1),
+
+                _buildMenuOption(
+                  icon: Icons.feedback_outlined,
+                  label: 'Help us improve the app',
+                  onTap: () {},
+                ),
+
+                // Removed Spacer() to prevent overflow
+
+                // HLCK logo at bottom
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: screenHeight * 0.04),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'HLCK',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                          ),
+                        ),
+                        Text(
+                          'PH',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
-
-            SizedBox(height: screenHeight * 0.05),
-
-            // More menu options
-            _buildMenuOption(
-              icon: Icons.list_alt_outlined,
-              label: 'My orders',
-              onTap: () {
-                Navigator.of(context).pushWithTransition(const OrdersScreen());
-              },
-            ),
-
-            const Divider(height: 1),
-
-            _buildMenuOption(
-              icon: Icons.person_outline,
-              label: 'Account Details',
-              onTap: () {
-                Navigator.of(context).pushWithTransition(
-                    const account_details.AccountDetailsScreen());
-              },
-            ),
-
-            const Divider(height: 1),
-
-            _buildMenuOption(
-              icon: Icons.support_agent_outlined,
-              label: 'Customer Service',
-              onTap: () {},
-            ),
-
-            const Divider(height: 1),
-
-            _buildMenuOption(
-              icon: Icons.logout_outlined,
-              label: 'Sign out',
-              onTap: () async {
-                await FirebaseAuth.instance.signOut();
-                if (context.mounted) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => const LoginScreen()),
-                    (route) => false,
-                  );
-                }
-              },
-            ),
-
-            const Divider(height: 1),
-
-            _buildMenuOption(
-              icon: Icons.feedback_outlined,
-              label: 'Help us improve the app',
-              onTap: () {},
-            ),
-
-            const Spacer(),
-
-            // HLCK logo at bottom
-            Center(
-              child: Padding(
-                padding: EdgeInsets.only(bottom: screenHeight * 0.025),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'HLCK',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
-                      ),
-                    ),
-                    Text(
-                      'PH',
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey.shade700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

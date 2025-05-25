@@ -1,20 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../widgets/bottom_nav_bar.dart';
 import '../../widgets/hlck_app_bar.dart';
 import '../home/home.dart';
 import '../wishlist/wishlist_screen.dart';
 import '../profile/account_screen.dart';
-// <-- Product list
-import '../../models/product.dart'; // <-- Product model
+import '../../models/product.dart';
+import '../cart/cart_screen.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
-  final Product
-      product; // this must be the same Product model as in your product list
+  final Product product;
 
   const ProductDetailsScreen({
     super.key,
     required this.product,
   });
+
+  Future<void> _addToCart(BuildContext context) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Please log in to add items to your cart.')),
+      );
+      return;
+    }
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('cart')
+          .add({
+        'name': product.name,
+        'price': product.price,
+        'imageUrl': product.imageUrl,
+        'category': product.category,
+        'description': product.description,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Added to cart!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to add to cart: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +61,6 @@ class ProductDetailsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Product Image
               Container(
                 height: 250,
                 decoration: BoxDecoration(
@@ -37,9 +70,8 @@ class ProductDetailsScreen extends StatelessWidget {
                 child: product.imageUrl?.isNotEmpty == true
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(
-                          product.imageUrl ??
-                              '', // <-- Pass the String, not a bool
+                        child: Image.network(
+                          product.imageUrl ?? '',
                           fit: BoxFit.contain,
                         ),
                       )
@@ -49,7 +81,6 @@ class ProductDetailsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               const Divider(),
-              // Product Name and Price
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -65,7 +96,7 @@ class ProductDetailsScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    product.price,
+                    '₱${product.price}',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
@@ -74,7 +105,6 @@ class ProductDetailsScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              // Product Description
               Text(
                 product.description ?? 'No description available.',
                 style: const TextStyle(fontSize: 15, color: Colors.black87),
@@ -82,7 +112,6 @@ class ProductDetailsScreen extends StatelessWidget {
               const SizedBox(height: 16),
               const Divider(),
               const SizedBox(height: 8),
-              // Add to label
               const Center(
                 child: Text(
                   'Add to:',
@@ -90,7 +119,6 @@ class ProductDetailsScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              // Cart and Wishlist Buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -103,9 +131,7 @@ class ProductDetailsScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ),
-                      onPressed: () {
-                        // Add to cart logic here
-                      },
+                      onPressed: () => _addToCart(context),
                       child: const Text('CART'),
                     ),
                   ),
@@ -119,8 +145,37 @@ class ProductDetailsScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ),
-                      onPressed: () {
-                        // Add to wishlist logic here
+                      onPressed: () async {
+                        final user = FirebaseAuth.instance.currentUser;
+                        if (user == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content:
+                                    Text('Please log in to add to wishlist.')),
+                          );
+                          return;
+                        }
+                        try {
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user.uid)
+                              .collection('wishlist')
+                              .add({
+                            'name': product.name,
+                            'price': product.price,
+                            'imageUrl': product.imageUrl,
+                            'description': product.description,
+                            'category': product.category,
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Added to wishlist!')),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text('Failed to add to wishlist: $e')),
+                          );
+                        }
                       },
                       child: const Text('WISHLIST'),
                     ),
@@ -157,57 +212,6 @@ class ProductDetailsScreen extends StatelessWidget {
               break;
           }
         },
-      ),
-    );
-  }
-
-  Widget _buildProductCard(Product product) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: Container(
-              color: Colors.grey.shade200,
-              child: product.imageUrl?.isNotEmpty == true
-                  ? ClipRRect(
-                      borderRadius:
-                          const BorderRadius.vertical(top: Radius.circular(4)),
-                      child: Image.asset(
-                        product.imageUrl ?? '',
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  : const Center(
-                      child: Icon(Icons.image, size: 60, color: Colors.grey),
-                    ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  product.price,
-                  style: const TextStyle(
-                      color: Colors.green, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

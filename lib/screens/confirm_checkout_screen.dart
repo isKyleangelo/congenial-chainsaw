@@ -1,214 +1,260 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/hlck_app_bar.dart';
 import '../routes.dart';
-import 'checkout_screen.dart';
 import 'home/home.dart';
 import 'wishlist/wishlist_screen.dart';
 import 'profile/account_screen.dart';
 import 'products/all_products_screen.dart';
 
-class ConfirmCheckoutScreen extends StatelessWidget {
-  const ConfirmCheckoutScreen({super.key});
+class CheckoutScreen extends StatelessWidget {
+  const CheckoutScreen({super.key});
+
+  Future<Map<String, dynamic>?> _getUserData(String uid) async {
+    final doc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    return doc.data();
+  }
+
+  Future<List<Map<String, dynamic>>> _getCartItems(String uid) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('cart')
+        .get();
+    return snapshot.docs.map((doc) => doc.data()).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return Scaffold(
+        appBar: const HLCKAppBar(
+          title: 'HLCK',
+          showBackButton: true,
+          showCartIcon: false,
+        ),
+        body: const Center(child: Text('Please log in to checkout.')),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const HLCKAppBar(
-        title: 'Confirm Order',
+        title: 'HLCK',
         showBackButton: true,
         showCartIcon: false,
       ),
-      body: Stack(
-        children: [
-          // Decorative shamrocks
-          Positioned(
-            top: 50,
-            left: 20,
-            child: Icon(Icons.eco, size: 40, color: Colors.green.shade300),
-          ),
-          Positioned(
-            top: 30,
-            right: 40,
-            child: Icon(Icons.eco, size: 30, color: Colors.green.shade300),
-          ),
-          Positioned(
-            top: 80,
-            right: 20,
-            child: Icon(Icons.eco, size: 40, color: Colors.green.shade300),
-          ),
+      body: FutureBuilder(
+        future: Future.wait([
+          _getUserData(user.uid),
+          _getCartItems(user.uid),
+        ]),
+        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final userData = snapshot.data![0] as Map<String, dynamic>?;
+          final cartItems = snapshot.data![1] as List<Map<String, dynamic>>;
 
-          // Main content
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+          final email = user.email ?? '';
+          final address = userData?['address'] ?? '';
+          double total = 0;
+          for (var item in cartItems) {
+            final price = double.tryParse(item['price']
+                    .toString()
+                    .replaceAll('₱', '')
+                    .replaceAll(',', '')) ??
+                0;
+            total += price;
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 100), // Space for shamrocks
-
-                // Order summary card
+                // User info
                 Card(
-                  elevation: 4,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                      borderRadius: BorderRadius.circular(8)),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Item with image
+                        Text('Email: $email',
+                            style: const TextStyle(fontSize: 16)),
+                        const SizedBox(height: 8),
                         Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Product image
-                            Container(
-                              width: 80,
-                              height: 80,
-                              color: Colors.grey.shade200,
-                              child: const Center(
-                                child: Text(
-                                  '[Image]',
-                                  style: TextStyle(color: Colors.grey),
+                            const Text('Address: ',
+                                style: TextStyle(fontSize: 16)),
+                            Expanded(
+                              child: Text(
+                                address.isNotEmpty ? address : 'No address set',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: address.isNotEmpty
+                                      ? Colors.black
+                                      : Colors.red,
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 16),
-
-                            // Item details
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Item 1',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  const Text(
-                                    '₱4,999',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
+                            if (address.isEmpty)
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pushWithTransition(
+                                      const AccountScreen());
+                                },
+                                child: const Text('Set Address'),
                               ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 20),
-                        const Divider(),
-
-                        // Shipping information
-                        const Text(
-                          'Shipping Address',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Your name',
-                              style: TextStyle(color: Colors.grey.shade600),
-                            ),
-                            const Text('John Doe'),
-                          ],
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        // Contact information
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Contact Number',
-                              style: TextStyle(color: Colors.grey.shade600),
-                            ),
-                            const Text('09123456789'),
-                          ],
-                        ),
-
-                        const SizedBox(height: 20),
-                        const Divider(),
-
-                        // Payment method
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Method of Payment',
-                              style: TextStyle(color: Colors.grey.shade600),
-                            ),
-                            const Text('Cash'),
-                          ],
-                        ),
-
-                        const SizedBox(height: 20),
-                        const Divider(),
-
-                        // Total
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Total',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              '₱4,999',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Colors.red.shade600,
-                              ),
-                            ),
                           ],
                         ),
                       ],
                     ),
                   ),
                 ),
+                const SizedBox(height: 20),
 
-                const SizedBox(height: 24),
-
-                // Confirm checkout button
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context)
-                        .pushWithTransition(const CheckoutScreen());
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                // Cart items
+                Expanded(
+                  child: Card(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: cartItems.isEmpty
+                          ? const Center(child: Text('Your cart is empty.'))
+                          : ListView.separated(
+                              itemCount: cartItems.length,
+                              separatorBuilder: (_, __) => const Divider(),
+                              itemBuilder: (context, index) {
+                                final item = cartItems[index];
+                                return Row(
+                                  children: [
+                                    if (item['imageUrl'] != null &&
+                                        item['imageUrl'].toString().isNotEmpty)
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(6),
+                                        child: Image.network(
+                                          item['imageUrl'],
+                                          width: 48,
+                                          height: 48,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    else
+                                      Container(
+                                        width: 48,
+                                        height: 48,
+                                        color: Colors.grey[300],
+                                        child:
+                                            const Icon(Icons.image, size: 24),
+                                      ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        item['name'] ?? 'Item',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Text(
+                                      '₱${item['price']}',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
                     ),
                   ),
-                  child: const Text(
-                    'CONFIRM ORDER',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                ),
+                const SizedBox(height: 20),
+
+                // Total
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Total:',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text('₱${total.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                const SizedBox(height: 20),
+
+                // Proceed button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: (address.isEmpty || cartItems.isEmpty)
+                        ? null
+                        : () async {
+                            final confirmed = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Confirm Checkout'),
+                                content: const Text(
+                                    'Are you sure you want to checkout these products?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
+                                    child: const Text('Proceed'),
+                                  ),
+                                ],
+                              ),
+                            );
+                            if (confirmed == true) {
+                              // Here you can add order creation logic if needed
+                              // Clear the cart
+                              final cartRef = FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(user.uid)
+                                  .collection('cart');
+                              final cartSnapshot = await cartRef.get();
+                              for (var doc in cartSnapshot.docs) {
+                                await doc.reference.delete();
+                              }
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Checkout successful!')),
+                                );
+                                Navigator.of(context)
+                                    .pushReplacementWithTransition(
+                                        const HomePage());
+                              }
+                            }
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
+                    child: const Text('Proceed to Checkout'),
                   ),
                 ),
               ],
             ),
-          ),
-        ],
+          );
+        },
       ),
       bottomNavigationBar: BottomNavBar(
         currentIndex: 1, // Shop tab

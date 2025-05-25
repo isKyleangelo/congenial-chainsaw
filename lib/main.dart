@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'widgets/home_widget.dart';
 import 'screens/cart/cart_screen.dart';
-import 'screens/checkout_screen.dart';
+import 'screens/confirm_checkout_screen.dart';
 import 'screens/confirm_checkout_screen.dart';
 import 'screens/wishlist/wishlist_screen.dart';
 import 'screens/oops_screen.dart';
@@ -12,6 +12,7 @@ import 'screens/products/all_products_screen.dart';
 import 'screens/profile/account_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
+import 'screens/products/category_screen.dart'; // <-- Make sure this import is correct
 import 'navigation.dart';
 import 'config/firebase_options.dart';
 import 'providers/product_provider.dart';
@@ -68,8 +69,6 @@ class MyApp extends StatelessWidget {
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          print(
-              'Auth state change: connection=${snapshot.connectionState}, user=${snapshot.data}');
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
@@ -84,7 +83,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home': (context) => const HomePage(),
         '/cart': (context) => const CartScreen(),
-        '/confirm-checkout': (context) => const ConfirmCheckoutScreen(),
+        '/confirm-checkout': (context) => const CheckoutScreen(),
         '/checkout': (context) => const CheckoutScreen(),
         '/wishlist': (context) => const WishlistScreen(),
         '/oops': (context) => const OopsScreen(),
@@ -97,40 +96,9 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         if (settings.name!.startsWith('/category/')) {
           final categoryName = settings.name!.split('/category/')[1];
-          return MaterialPageRoute(
-            builder: (context) {
-              final List<Map<String, Object>> sampleProducts = [
-                {
-                  'name': '${categoryName.split(' ')[0]} 1',
-                  'price': '₱999',
-                  'isStock': true,
-                  'isSale': false,
-                },
-                {
-                  'name': '${categoryName.split(' ')[0]} 2',
-                  'price': '₱1,299',
-                  'isStock': true,
-                  'isSale': true,
-                },
-                {
-                  'name': '${categoryName.split(' ')[0]} 3',
-                  'price': '₱899',
-                  'isStock': false,
-                  'isSale': false,
-                },
-                {
-                  'name': '${categoryName.split(' ')[0]} 4',
-                  'price': '₱1,499',
-                  'isStock': true,
-                  'isSale': false,
-                },
-              ];
 
-              return CategoryScreen(
-                title: categoryName,
-                products: sampleProducts,
-              );
-            },
+          return MaterialPageRoute(
+            builder: (context) => CategoryScreen(title: categoryName),
           );
         }
         return null;
@@ -141,32 +109,4 @@ class MyApp extends StatelessWidget {
 
 Future<void> signOut() async {
   await FirebaseAuth.instance.signOut();
-}
-
-class CategoryScreen extends StatelessWidget {
-  final String title;
-  final List<Map<String, Object>> products;
-
-  const CategoryScreen({
-    super.key,
-    required this.title,
-    required this.products,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: ListView.builder(
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          final product = products[index];
-          return ListTile(
-            title: Text(product['name'] as String),
-            subtitle: Text(product['price'] as String),
-          );
-        },
-      ),
-    );
-  }
 }

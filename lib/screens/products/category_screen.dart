@@ -1,205 +1,120 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../../widgets/bottom_nav_bar.dart';
-import '../../widgets/hlck_app_bar.dart';
+import '../../models/product.dart';
+import '../products/product_details_screen.dart';
 
 class CategoryScreen extends StatelessWidget {
   final String title;
-  final List<Map<String, dynamic>> products;
 
-  const CategoryScreen({
-    super.key,
-    required this.title,
-    required this.products,
-  });
+  const CategoryScreen({super.key, required this.title});
+
+  Future<List<Map<String, dynamic>>> _fetchCategoryProducts(
+      String categoryKey) async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('products')
+          .where('category', isEqualTo: categoryKey)
+          .get();
+
+      return querySnapshot.docs.map((doc) => doc.data()).toList();
+    } catch (e) {
+      print('Error fetching category products: $e');
+      return [];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: HLCKAppBar(
-        title: title,
-        showBackButton: true,
+      appBar: AppBar(
+        title: Text(title.toUpperCase()),
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(16.0),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 16.0,
-          mainAxisSpacing: 16.0,
-          childAspectRatio: 0.6,
-        ),
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          final product = products[index];
-          return ProductCard(
-            name: product['name'],
-            price: product['price'],
-            isStock: product['isStock'],
-            isSale: product['isSale'],
-          );
-        },
-      ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: 1,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, '/home');
-              break;
-            case 1:
-              Navigator.pushReplacementNamed(context, '/shop');
-              break;
-            case 2:
-              Navigator.pushReplacementNamed(context, '/cart');
-              break;
-            case 3:
-              Navigator.pushReplacementNamed(context, '/account');
-              break;
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: _fetchCategoryProducts(title),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
           }
-        },
-      ),
-    );
-  }
-}
 
-class ProductCard extends StatelessWidget {
-  final String name;
-  final String price;
-  final bool isStock;
-  final bool isSale;
+          if (snapshot.hasError) {
+            return const Center(child: Text('Something went wrong.'));
+          }
 
-  const ProductCard({
-    super.key,
-    required this.name,
-    required this.price,
-    this.isStock = true,
-    this.isSale = false,
-  });
+          final products = snapshot.data ?? [];
 
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-        side: BorderSide(color: Colors.grey.shade300),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Product image with stock/sale badge
-          Stack(
-            children: [
-              Container(
-                height: 120,
-                width: double.infinity,
-                color: Colors.grey.shade200,
-                child: const Center(
-                  child: Text(
-                    '[Product Image]',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ),
-              ),
-              // Stock or Sale badge
-              if (!isStock || isSale)
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: !isStock ? Colors.red : Colors.green,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      !isStock ? 'OUT OF STOCK' : 'SALE',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
+          if (products.isEmpty) {
+            return const Center(
+                child: Text('No products found in this category.'));
+          }
+
+          return GridView.builder(
+            padding: const EdgeInsets.all(10),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 0.75,
+            ),
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              final product = products[index];
+              return GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ProductDetailsScreen(
+                        product: Product(
+                          name: product['name'] ?? '',
+                          price: product['price'].toString(),
+                          imageUrl: product['imageUrl'],
+                          description: product['description'],
+                          category: product['category'],
+                        ),
                       ),
                     ),
+                  );
+                },
+                child: Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ),
-            ],
-          ),
-
-          // Product details
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    price,
-                    style: TextStyle(
-                      color: isSale ? Colors.red : Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(flex: 1),
-
-                  // Add to cart button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: isStock ? () {} : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        minimumSize: const Size.fromHeight(25),
-                        textStyle: const TextStyle(fontSize: 12),
-                      ),
-                      child: const Text('ADD TO CART'),
-                    ),
-                  ),
-
-                  // Wishlist button with heart icon
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.favorite_border),
-                        onPressed: () {},
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        iconSize: 18,
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(12)),
+                          child: Image.network(
+                            product['imageUrl'],
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              product['name'] ?? '',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4),
+                            Text('₱${product['price'] ?? ''}'),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-          ),
-        ],
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
-}
-
-void navigateToCategory(BuildContext context, String categoryName, List<Map<String, dynamic>> products) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => CategoryScreen(
-        title: categoryName,
-        products: products,
-      ),
-    ),
-  );
 }

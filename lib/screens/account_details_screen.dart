@@ -37,7 +37,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
   Future<void> _loadProfile() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
-    final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final doc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
     if (doc.exists) {
       final data = doc.data()!;
       setState(() {
@@ -67,11 +68,22 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
         content: SingleChildScrollView(
           child: Column(
             children: [
-              TextField(controller: firstNameController, decoration: const InputDecoration(labelText: 'First Name')),
-              TextField(controller: lastNameController, decoration: const InputDecoration(labelText: 'Last Name')),
-              TextField(controller: dobController, decoration: const InputDecoration(labelText: 'Date of Birth')),
-              TextField(controller: genderController, decoration: const InputDecoration(labelText: 'Gender')),
-              TextField(controller: marketController, decoration: const InputDecoration(labelText: 'Market')),
+              TextField(
+                  controller: firstNameController,
+                  decoration: const InputDecoration(labelText: 'First Name')),
+              TextField(
+                  controller: lastNameController,
+                  decoration: const InputDecoration(labelText: 'Last Name')),
+              TextField(
+                  controller: dobController,
+                  decoration:
+                      const InputDecoration(labelText: 'Date of Birth')),
+              TextField(
+                  controller: genderController,
+                  decoration: const InputDecoration(labelText: 'Gender')),
+              TextField(
+                  controller: marketController,
+                  decoration: const InputDecoration(labelText: 'Market')),
             ],
           ),
         ),
@@ -84,7 +96,10 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
             onPressed: () async {
               final uid = FirebaseAuth.instance.currentUser?.uid;
               if (uid != null) {
-                await FirebaseFirestore.instance.collection('users').doc(uid).set({
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(uid)
+                    .set({
                   'email': email,
                   'firstName': firstNameController.text,
                   'lastName': lastNameController.text,
@@ -113,7 +128,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
     List<TextEditingController> controllers =
         addresses.map((a) => TextEditingController(text: a)).toList();
     final newAddressController = TextEditingController();
-    final billingAddressController = TextEditingController(text: billingAddress);
+    final billingAddressController =
+        TextEditingController(text: billingAddress);
 
     await showDialog(
       context: context,
@@ -130,7 +146,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                     Expanded(
                       child: TextField(
                         controller: controller,
-                        decoration: InputDecoration(labelText: 'Address ${idx + 1}'),
+                        decoration:
+                            InputDecoration(labelText: 'Address ${idx + 1}'),
                       ),
                     ),
                     IconButton(
@@ -168,18 +185,28 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
               final uid = FirebaseAuth.instance.currentUser?.uid;
               if (uid != null) {
                 // Update addresses from controllers
-                final updatedAddresses = controllers.map((c) => c.text).where((a) => a.isNotEmpty).toList();
+                final updatedAddresses = controllers
+                    .map((c) => c.text)
+                    .where((a) => a.isNotEmpty)
+                    .toList();
                 // Add new address if provided
                 if (newAddressController.text.trim().isNotEmpty) {
                   updatedAddresses.add(newAddressController.text.trim());
                 }
-                await FirebaseFirestore.instance.collection('users').doc(uid).set({
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(uid)
+                    .set({
                   'addresses': updatedAddresses,
                   'billingAddress': billingAddressController.text,
+                  'address':
+                      updatedAddresses.isNotEmpty ? updatedAddresses[0] : '',
                 }, SetOptions(merge: true));
                 setState(() {
                   addresses = updatedAddresses;
                   billingAddress = billingAddressController.text;
+                  address =
+                      updatedAddresses.isNotEmpty ? updatedAddresses[0] : '';
                 });
               }
               Navigator.pop(context);
@@ -206,7 +233,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
               TextField(
                 controller: currentPasswordController,
                 obscureText: true,
-                decoration: const InputDecoration(labelText: 'Current Password'),
+                decoration:
+                    const InputDecoration(labelText: 'Current Password'),
               ),
               TextField(
                 controller: newPasswordController,
@@ -216,7 +244,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
               TextField(
                 controller: confirmPasswordController,
                 obscureText: true,
-                decoration: const InputDecoration(labelText: 'Confirm New Password'),
+                decoration:
+                    const InputDecoration(labelText: 'Confirm New Password'),
               ),
             ],
           ),
@@ -243,13 +272,15 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
               if (user != null && email != null) {
                 try {
                   // Re-authenticate
-                  final cred = EmailAuthProvider.credential(email: email, password: currentPassword);
+                  final cred = EmailAuthProvider.credential(
+                      email: email, password: currentPassword);
                   await user.reauthenticateWithCredential(cred);
                   // Change password
                   await user.updatePassword(newPassword);
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Password changed successfully')),
+                    const SnackBar(
+                        content: Text('Password changed successfully')),
                   );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -307,7 +338,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
               const SizedBox(height: 30),
 
               // Personal Details section
-              _buildSectionHeader('Personal Details', onEditPressed: _editProfile),
+              _buildSectionHeader('Personal Details',
+                  onEditPressed: _editProfile),
               const SizedBox(height: 16),
 
               _buildInfoRow('Email', email),
@@ -330,7 +362,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
               const SizedBox(height: 30),
 
               // My Addresses section
-              _buildSectionHeader('My Addresses', onEditPressed: _editAddresses), // <-- Use new edit
+              _buildSectionHeader('My Addresses',
+                  onEditPressed: _editAddresses), // <-- Use new edit
               const SizedBox(height: 16),
               const Text(
                 'You can add and edit delivery addresses here',
@@ -346,7 +379,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                   for (var i = 0; i < addresses.length; i++)
                     _buildInfoRow('Address ${i + 1}', addresses[i]),
                   if (addresses.isEmpty)
-                    const Text('No addresses yet.', style: TextStyle(color: Colors.grey)),
+                    const Text('No addresses yet.',
+                        style: TextStyle(color: Colors.grey)),
                   const SizedBox(height: 12),
                   _buildInfoRow('Billing address', billingAddress),
                 ],
