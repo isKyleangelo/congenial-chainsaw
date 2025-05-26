@@ -218,7 +218,6 @@ class _HomePageState extends State<HomePage> {
     return Container(
       padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
-        color: Colors.pink[100],
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -227,20 +226,25 @@ class _HomePageState extends State<HomePage> {
             offset: const Offset(0, 2),
           ),
         ],
+        image: DecorationImage(
+          image: AssetImage('assets/images/Untitled design.png'),
+          fit: BoxFit.cover,
+        ),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'Fanny Packs?',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 24.0,
-            ),
-          ),
-          const SizedBox(height: 16),
+          // Optionally, you can add a semi-transparent overlay for better button visibility:
+          // Container(
+          //   color: Colors.white.withOpacity(0.7),
+          // ),
+          const SizedBox(height: 80), // Space for the image background
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const AllProductsScreen()),
+              );
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,

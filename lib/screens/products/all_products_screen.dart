@@ -184,20 +184,24 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                                       width: double.infinity,
                                       height: double.infinity,
                                     )
-                                  : product.imageUrl != null &&
-                                          product.imageUrl!.startsWith('http')
+                                  : product.imageUrl != null && product.imageUrl!.startsWith('http')
                                       ? Image.network(
                                           product.imageUrl!,
                                           fit: BoxFit.cover,
                                           width: double.infinity,
                                           height: double.infinity,
                                         )
-                                      : Image.network(
-                                          product.imageUrl ?? '',
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                          height: double.infinity,
-                                        ),
+                                      : product.imageUrl != null && product.imageUrl!.isNotEmpty
+                                          ? Image.asset(
+                                              product.imageUrl!,
+                                              fit: BoxFit.cover,
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                            )
+                                          : Container(
+                                              color: Colors.grey[200],
+                                              child: const Icon(Icons.image, size: 48, color: Colors.grey),
+                                            ),
                             ),
                           ),
                           Padding(
