@@ -7,7 +7,7 @@ A new Flutter project.
 This project is a starting point for a Flutter application.
 ## 📥 Download APK
 Download the APK file here:  
-[Download APK](ttps://drive.google.com/drive/folders/1NMziqu2ZDlvRQnBF6gJAYKO9a1ZoHyF2)
+[Download APK](https://drive.google.com/drive/folders/1NMziqu2ZDlvRQnBF6gJAYKO9a1ZoHyF2)
 
 ## 📢 Ads Video
 Watch the HLCK ads here:  
