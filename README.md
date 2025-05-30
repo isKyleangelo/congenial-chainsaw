@@ -11,7 +11,7 @@ Download the APK file here:
 
 ## 📢 Ads Video
 Watch the HLCK ads here:  
-[Ads Screenshots Folder](https://drive.google.com/drive/folders/1_xf7RdBdnTU_IuxDVuSWMEgyUzcoU1b7)
+[Ads Video Folder](https://drive.google.com/drive/folders/1_xf7RdBdnTU_IuxDVuSWMEgyUzcoU1b7)
 
 A few resources to get you started if this is your first Flutter project:
 
