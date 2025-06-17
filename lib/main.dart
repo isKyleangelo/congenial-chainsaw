@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'widgets/home_widget.dart';
 import 'screens/cart/cart_screen.dart';
 import 'screens/confirm_checkout_screen.dart';
-import 'screens/confirm_checkout_screen.dart';
 import 'screens/wishlist/wishlist_screen.dart';
 import 'screens/oops_screen.dart';
 import 'screens/products/all_products_screen.dart';

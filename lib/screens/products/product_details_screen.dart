@@ -7,7 +7,6 @@ import '../home/home.dart';
 import '../wishlist/wishlist_screen.dart';
 import '../profile/account_screen.dart';
 import '../../models/product.dart';
-import '../cart/cart_screen.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final Product product;

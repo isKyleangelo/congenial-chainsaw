@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 16.0),
-              _buildSearchBar(),
+              // _buildSearchBar(), // <-- Removed search bar
               const SizedBox(height: 16.0),
               _buildBanner(),
               const SizedBox(height: 16.0),
@@ -139,44 +139,6 @@ class _HomePageState extends State<HomePage> {
               break;
           }
         },
-      ),
-    );
-  }
-
-  Widget _buildSearchBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      height: 40,
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey[300]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.search, color: Colors.grey[600]),
-          const SizedBox(width: 8.0),
-          Expanded(
-            child: TextField(
-              decoration: const InputDecoration(
-                hintText: 'Search',
-                hintStyle: TextStyle(color: Colors.grey, fontSize: 14.0),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(bottom: 6.8),
-              ),
-              onChanged: (value) {
-                print('Search query: $value');
-              },
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -330,62 +292,143 @@ class CategoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return InkWell(
-          borderRadius: BorderRadius.circular(8.0),
-          onTap: () async {
-            await onTapCategory(context, _categoryKey);
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
+    return GestureDetector(
+      onTap: () async {
+        await onTapCategory(context, _categoryKey);
+      },
+      child: Container(
+        width: 160,
+        height: 200,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(
+            color: Colors.black,
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.asset(
-                    _imagePath,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(color: Colors.grey[300]);
-                    },
-                  ),
-                ),
-                Center(
-                  child: Container(
-                    color: Colors.white.withOpacity(0.2),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontFamily: 'Performa',
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28,
-                        letterSpacing: 1,
-                        shadows: [
-                          Shadow(
-                            color: Colors.white,
-                            blurRadius: 8,
-                            offset: Offset(0, 0),
-                          ),
-                        ],
-                      ),
+          ],
+          // Removed borderRadius for sharp corners
+        ),
+        child: Column(
+          children: [
+            // Product Image Section
+            Expanded(
+              flex: 3,
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF0F0F0),
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Colors.black,
+                      width: 2,
                     ),
                   ),
                 ),
-              ],
+                child: _imagePath.isNotEmpty
+                    ? Image.asset(
+                        _imagePath,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return _buildTShirtIcon();
+                        },
+                      )
+                    : _buildTShirtIcon(),
+              ),
             ),
-          ),
-        );
-      },
+            // Product Title Section
+            Container(
+              width: double.infinity,
+              height: 30, // Fixed height for the black label container
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: const BoxDecoration(
+                color: Colors.black,
+              ),
+              alignment:
+                  Alignment.center, // Ensures text is vertically centered
+              child: Text(
+                title == 'Only in\nHLCK'
+                    ? 'Only in HLCK'
+                    : title, // <-- Make label one line
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                  fontFamily: 'Poppins', // Use Poppins font
+                  letterSpacing: -0.18,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1, // <-- Force single line
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
+
+  Widget _buildTShirtIcon() {
+    return Center(
+      child: SizedBox(
+        width: 80,
+        height: 90,
+        child: CustomPaint(
+          painter: TShirtPainter(),
+        ),
+      ),
+    );
+  }
+}
+
+class TShirtPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFF121212)
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+
+    // T-shirt body
+    path.moveTo(size.width * 0.2, size.height * 0.3);
+    path.lineTo(size.width * 0.8, size.height * 0.3);
+    path.lineTo(size.width * 0.8, size.height * 0.9);
+    path.lineTo(size.width * 0.40, size.height * 0.70);
+    path.close();
+
+    // Minimalist neck
+    path.moveTo(size.width * 0.46, size.height * 0.15);
+    path.lineTo(size.width * 0.54, size.height * 0.15);
+    path.lineTo(size.width * 0.54, size.height * 0.3);
+    path.lineTo(size.width * 0.46, size.height * 0.3);
+    path.close();
+
+    // Left sleeve
+    path.moveTo(size.width * 0.05, size.height * 0.2);
+    path.lineTo(size.width * 0.2, size.height * 0.2);
+    path.lineTo(size.width * 0.2, size.height * 0.5);
+    path.lineTo(size.width * 0.05, size.height * 0.45);
+    path.close();
+
+    // Right sleeve
+    path.moveTo(size.width * 0.8, size.height * 0.2);
+    path.lineTo(size.width * 0.95, size.height * 0.2);
+    path.lineTo(size.width * 0.95, size.height * 0.45);
+    path.lineTo(size.width * 0.8, size.height * 0.5);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
 class LatestDropItem extends StatelessWidget {
